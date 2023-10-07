@@ -6,6 +6,7 @@ using UnityEngine;
 public struct LODInfo{
     public int lod;
     public float visibleDistanceThreshold;
+    public bool useFullCollider;
 }
 
 public class LODMesh

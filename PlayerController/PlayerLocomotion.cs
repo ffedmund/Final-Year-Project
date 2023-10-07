@@ -43,7 +43,7 @@ namespace FYP
         {
             float delta = Time.deltaTime;
 
-            isSprinting = inputHandler.b_Input;
+            isSprinting = inputHandler.b_Input; 
             inputHandler.TickInput(delta);
             HandleMovement(delta);
             HandleRollingAndSprinting(delta);
@@ -88,7 +88,7 @@ namespace FYP
             moveDirection.y = 0;
 
             float speed = movementSpeed;
-            
+
             if(inputHandler.sprintFlag)
             {
                 speed = sprintSpeed;
@@ -99,6 +99,7 @@ namespace FYP
             {
                 moveDirection *= speed;
             }
+            
 
             Vector3 projectedVelocity = Vector3.ProjectOnPlane(moveDirection, normalVector);
             rigidbody.velocity = projectedVelocity;

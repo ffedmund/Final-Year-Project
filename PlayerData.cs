@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -27,6 +28,16 @@ public class PlayerData{
 
     public Dictionary<string,int> GetAttributes(){
         return _playerAttributesData;
+    }
+
+    public string[] ToStringArray(bool fullAttributes = false){
+        int outputLength = _playerAttributesData.Count - (fullAttributes?0:2);
+        string[] output = new string[outputLength];
+        int count = 0;
+        for(int i = fullAttributes?0:2; i < _playerAttributesData.Count; i++){
+            output[count++] = string.Format("{0}: {1}",attributeKeys[i],_playerAttributesData[attributeKeys[i]]);
+        }
+        return output;
     }
 
 

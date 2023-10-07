@@ -10,7 +10,7 @@ using UnityEngine;
 **/
 public class EndlessTerrain : MonoBehaviour
 {   
-    public const float scale = 15;
+    public const float scale = 10;
     const float viewerMoveThresholdForChunkUpdate = 25f;
 
     public LODInfo[] detailLevels;

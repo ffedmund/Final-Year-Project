@@ -51,6 +51,7 @@ public class MapGenerator : MonoBehaviour
     public AnimationCurve meshHeightCurve;//Adjust the height of vertices
 
     public bool useFalloutMap;
+    public bool useFlatCenterMap;
     public bool useEndlessTerrainScale;
     public bool generateTrees;
     public bool autoUpdate;
@@ -63,7 +64,7 @@ public class MapGenerator : MonoBehaviour
     Transform[] editorMapTransformArray;
 
     void Awake() {
-        falloutMap = FalloffGenerator.GenerateFalloffMap(mapChunkSize);
+        falloutMap = FalloffGenerator.GenerateFalloffMap(mapChunkSize,useFlatCenterMap);
         foreach(Transform mapTransform in editorMapTransformArray){
             mapTransform.gameObject.SetActive(false);
         }
@@ -89,7 +90,7 @@ public class MapGenerator : MonoBehaviour
                 break;
         }
         if(generateTrees){
-            mapDisplay.DrawTree(TreeGenerator.GenerateTreeMap(mapData.heghtMap,mapChunkSize-1,20),meshHeightMultiplier, mapData.heghtMap, meshHeightCurve);
+            mapDisplay.DrawTree(TreeGenerator.GenerateTreeMap(mapData.heghtMap,mapChunkSize-1,20), mapData.heghtMap);
         }
     }
 
@@ -150,6 +151,7 @@ public class MapGenerator : MonoBehaviour
         for(int y = 0; y<mapChunkSize; y++){
             for(int x = 0; x<mapChunkSize; x++){
                 noiseMap[x,y] -= useFalloutMap? falloutMap[x,y]:0;
+                noiseMap[x,y] = (useFlatCenterMap && centre == Vector2.zero)? Mathf.Abs(falloutMap[x,y]-1)*0.35f + (1-Mathf.Abs(falloutMap[x,y]-1))*noiseMap[x,y]:noiseMap[x,y];
                 float currentHeight = noiseMap [x,y];
 
                 colorMap[x + y * mapChunkSize] = regions[0].color;
@@ -185,6 +187,6 @@ public class MapGenerator : MonoBehaviour
         if(octaves < 0){
             octaves = 0;
         }
-        falloutMap = FalloffGenerator.GenerateFalloffMap(mapChunkSize);
+        falloutMap = FalloffGenerator.GenerateFalloffMap(mapChunkSize, !useFlatCenterMap);
     }
 }

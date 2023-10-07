@@ -76,7 +76,8 @@ namespace FYP
         private void HandleRollInput(float delta)
         {
             // b_Input = inputActions.PlayerActions.Roll.phase == UnityEngine.InputSystem.InputActionPhase.Started;
-            b_Input = inputActions.PlayerActions.Roll.triggered;
+            // b_Input = inputActions.PlayerActions.Roll.triggered;
+            b_Input = inputActions.PlayerActions.Roll.IsPressed();
 
             if (b_Input)
             {

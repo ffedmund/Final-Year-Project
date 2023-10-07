@@ -53,13 +53,14 @@ public class WaterGenerator: MonoBehaviour{
                 DestroyImmediate(child.gameObject);
             }
         }
+        lastFrameVisibleWater.Clear();
     }
 
     public GameObject CreateWaterPlane(float scale,Vector2Int waterCoodinate){
         GameObject waterMap = GameObject.CreatePrimitive(PrimitiveType.Plane);
         waterMap.name = "Water Plane["+waterCoodinate.ToString()+"]";
         waterMap.transform.localScale = new Vector3(scale/10,1,scale/10);
-        waterMap.transform.position = new Vector3(waterCoodinate.x+0.1f,0,waterCoodinate.y+0.1f)*scale;
+        waterMap.transform.position = new Vector3(waterCoodinate.x+0.1f,-0.1f,waterCoodinate.y+0.1f)*scale;
         waterMap.GetComponent<MeshRenderer>().material = waterMaterial;
         waterMap.transform.SetParent(transform);
         waterMap.SetActive(false);

@@ -10,7 +10,6 @@ public class MapDisplay : MonoBehaviour
    public Transform meshTransform;
 
    public GameObject[] treePrefabs;
-   public Transform trees;
 
      //Create Texture(Color)
      public void DrawTexture(Texture2D texture){
@@ -28,16 +27,11 @@ public class MapDisplay : MonoBehaviour
           // WaterGenerator.CreateWaterMap(Vector3.zero,waterMaterial);
      }
 
-     public void DrawTree(bool[,] treeMap, float heightMultiplier, float[,] heightMap, AnimationCurve meshHeightCurve){
-          float scale = EndlessTerrain.scale;
-          for(int y = 0; y < treeMap.GetLength(1); y++){
-               for(int x = 0; x < treeMap.GetLength(0); x++){
-                    //[Need Fixed] Dont know why the matrix need to be rotate
-                    if(treeMap[x,y]){
-                         GameObject tree = Instantiate(treePrefabs[Random.Range(0,treePrefabs.Length)], new Vector3((x-treeMap.GetLength(0)/2)*scale,meshHeightCurve.Evaluate(heightMap[x,y])*heightMultiplier*10,(y-treeMap.GetLength(0)/2)*scale),Quaternion.identity);
-                         tree.transform.SetParent(trees);
-                    }
-               }
+     public void DrawTree(bool[,] treeMap, float[,] heightMap){
+          foreach (Transform transform in meshTransform)
+          {
+               DestroyImmediate(transform.gameObject);
           }
+          GetComponent<TreeGenerator>().CreateTrees(meshTransform,treeMap,Vector3.zero,heightMap);
      }
 }
