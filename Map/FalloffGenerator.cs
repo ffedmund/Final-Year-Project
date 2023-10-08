@@ -4,7 +4,7 @@ using UnityEngine;
 
 public static class FalloffGenerator
 {
-    public static float[,] GenerateFalloffMap(int size, bool useEvaluateFunc){
+    public static float[,] GenerateFalloffMap(int size, bool useForFlatCenterMap){
         float[,] map = new float[size,size];
 
         for(int j = 0; j < size; j++){
@@ -13,17 +13,13 @@ public static class FalloffGenerator
                 float y = j / (float)size * 2 - 1;
 
                 float value = Mathf.Max(Mathf.Abs(x),Mathf.Abs(y));
-                map[i,j] = Evaluate(value);
-                // map[i,j] = useEvaluateFunc?Evaluate(value):value;
+                map[i,j] = Evaluate(value,useForFlatCenterMap?4:3.5f,useForFlatCenterMap?1.2f:2.2f);
             }
         }
         return map;
     }
 
-    static float Evaluate(float value){
-        float a = 4;
-        float b = 2.2f;
-        b = 0.2f;
+    static float Evaluate(float value,float a, float b){
         return Mathf.Pow(value,a)/(Mathf.Pow(value,a)+Mathf.Pow(b-b*value,a));
     }
 }

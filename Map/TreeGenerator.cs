@@ -11,30 +11,18 @@ public class TreeGenerator: MonoBehaviour
     [Range(0,10)]
     public float rndOffsetRange;
 
-    public static bool[,] GenerateTreeMap(float[,] heightMap, int size, float scale)
+    public static bool GenerateTreeMapUnit(Vector2 position, float seed)
     {
-        bool[,] treeMap = new bool[size, size];
-        float seed = Random.Range(0f, 100f);
 
-
-        //Dont know why y need inverse
-        for (int y = 0; y < size; y++)
-        {
-            for (int x = 0; x < size; x++)
-            {
-                float xCoord = (float)x / size * scale + seed;
-                float yCoord = (float)y / size * scale + seed;
-
-                float noise = Mathf.PerlinNoise(xCoord, yCoord);
-
-                // If the noise is greater than 0.5, place a tree
-                treeMap[x, size-1-y] = noise > (1 - coverage/100) && heightMap[x,y] > 0.4f && heightMap[x,y] <= 0.6f;
-            }
-        }
-        return treeMap;
+        float xCoord = position.x + seed;
+        float yCoord = position.y + seed;
+        float noise = Mathf.PerlinNoise(xCoord, yCoord);
+        // If the noise is greater than coverage rate, place a tree
+        return noise > (1 - coverage/100);
+        
     }
 
-    public void CreateTrees(Transform parentChunk, bool[,] treeMap, Vector2 chunkPosition, float[,] heightMap){
+    public void CreateTrees(Transform parentChunk, bool[,] treeMap, Vector2 chunkPosition){
             float scale = EndlessTerrain.scale;
             // Debug.Log(chunkPosition);
             for(int y = 0; y < treeMap.GetLength(1); y++){
@@ -46,12 +34,12 @@ public class TreeGenerator: MonoBehaviour
                             float rndOffset = Random.Range(-rndOffsetRange,rndOffsetRange);
                             float treePositionX =(chunkPosition.x + x-treeMap.GetLength(0)/2)*scale;
                             float treePositionZ =(chunkPosition.y+ y-treeMap.GetLength(0)/2)*scale;
-                            Vector3 treePosition = new Vector3(treePositionX,heightMap[x,y]*20,treePositionZ);
+                            Vector3 treePosition = new Vector3(treePositionX,50,treePositionZ);
                             Quaternion randomRotation = Quaternion.Euler(0f, Random.Range(0f, 180f), 0f);
                             if (Physics.Raycast(new Vector3(treePositionX,100,treePositionZ), Vector3.down ,out RaycastHit hit, 200f, layerMask)) {
                                 treePosition = new Vector3(treePositionX + rndOffset,hit.point.y,treePositionZ + rndOffset);
                             }
-                            Debug.Log(treePositionX + " " + treePositionZ);
+                            // Debug.Log(treePositionX + " " + treePositionZ);
                             GameObject tree = Instantiate(rndTreePrefab,treePosition, randomRotation);
                             tree.transform.parent = parentChunk;
                             tree.transform.localScale *= scale/10;

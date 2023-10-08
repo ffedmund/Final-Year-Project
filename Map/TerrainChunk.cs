@@ -17,8 +17,10 @@ public class TerrainChunk
 
     LODInfo[] detailLevels;
     LODMesh[] lodMeshes;
+    LODMesh collisionLODMesh;
 
     bool mapDataReceived;
+    bool hasGeneratedTrees;
     int previousLODIndex = -1;
 
     public TerrainChunk(Vector2 coordinate, int size, LODInfo[] detailLevels,Transform parent, Material material){
@@ -42,6 +44,9 @@ public class TerrainChunk
         lodMeshes = new LODMesh[detailLevels.Length];
         for(int i = 0; i < detailLevels.Length; i++){
             lodMeshes[i] = new LODMesh(detailLevels[i].lod, UpdateTerrainChunk);
+            if(detailLevels[i].useFullCollider){
+                collisionLODMesh = lodMeshes[i];
+            }
         }
 
         EndlessTerrain.mapGenerator.RequestMapData(position, OnMapDataReceived);
@@ -76,10 +81,20 @@ public class TerrainChunk
                     if(lodMesh.hasMesh){
                         meshFilter.mesh = lodMesh.mesh;
                         previousLODIndex = lodIndex;
-                        meshCollider.sharedMesh = lodMesh.mesh;
-                        EndlessTerrain.treeGenerator.CreateTrees(meshObject.transform,lodMesh.treeMapData,position,mapData.heghtMap);
                     }else if(!lodMesh.hasRequestedMesh){
                         lodMesh.RequestMeshData(mapData);
+                    }
+                }
+                if(lodIndex == 0){
+                    if(collisionLODMesh.hasMesh){
+                        meshCollider.sharedMesh = collisionLODMesh.mesh;
+                        if(!hasGeneratedTrees){
+                            EndlessTerrain.treeGenerator.CreateTrees(meshObject.transform,mapData.treeMap,position);
+                            hasGeneratedTrees = true;
+                        }
+                    }
+                    else if(!collisionLODMesh.hasRequestedMesh){
+                        collisionLODMesh.RequestMeshData(mapData);
                     }
                 }
                 EndlessTerrain.terrainChunksVisibleLastUpdate.Add(this);

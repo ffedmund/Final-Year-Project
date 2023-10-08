@@ -15,10 +15,13 @@ public struct TerrainType{
 public struct MapData{
     public readonly float[,] heghtMap;
     public readonly Color[] colorMap;
+    public readonly bool[,] treeMap;
 
-    public MapData(float[,] heightMap, Color[] colorMap){
+
+    public MapData(float[,] heightMap, Color[] colorMap, bool[,] treeMap){
         this.heghtMap = heightMap;
         this.colorMap = colorMap;
+        this.treeMap = treeMap;
     }
 }
 
@@ -34,7 +37,8 @@ public class MapGenerator : MonoBehaviour
 
     public Noise.NormalizeMode normalizeMode;
 
-    public const int mapChunkSize = 241;
+    public const int mapChunkSize = 95;//241
+    public bool useFlatShading;
     [Range(0,6)]
     public int EditorlevelOfDetail;//Change the number of vertices in each row
     public float noiseScale;//Scale of the size on noise map
@@ -81,7 +85,7 @@ public class MapGenerator : MonoBehaviour
                 mapDisplay.DrawTexture(TextureGenerator.TextureFromColorMap(mapData.colorMap,mapChunkSize,mapChunkSize));
                 break;
             case DrawMode.MeshMap:
-                mapDisplay.DrawMesh(MeshGenerator.GenerateTerrainMap(mapData.heghtMap,meshHeightMultiplier,meshHeightCurve,EditorlevelOfDetail),TextureGenerator.TextureFromColorMap(mapData.colorMap,mapChunkSize,mapChunkSize));
+                mapDisplay.DrawMesh(MeshGenerator.GenerateTerrainMap(mapData.heghtMap,meshHeightMultiplier,meshHeightCurve,EditorlevelOfDetail,useFlatShading),TextureGenerator.TextureFromColorMap(mapData.colorMap,mapChunkSize,mapChunkSize));
                 break;
             case DrawMode.FalloutMap:
                 mapDisplay.DrawTexture(TextureGenerator.TextureFromHeightMap(falloutMap));
@@ -90,7 +94,7 @@ public class MapGenerator : MonoBehaviour
                 break;
         }
         if(generateTrees){
-            mapDisplay.DrawTree(TreeGenerator.GenerateTreeMap(mapData.heghtMap,mapChunkSize-1,20), mapData.heghtMap);
+            mapDisplay.DrawTree(mapData.treeMap, mapData.heghtMap);
         }
     }
 
@@ -118,7 +122,7 @@ public class MapGenerator : MonoBehaviour
     }
 
     void MeshDataThread(MapData mapData,int lod, Action<MeshData> callback){
-        MeshData meshData = MeshGenerator.GenerateTerrainMap(mapData.heghtMap,meshHeightMultiplier,meshHeightCurve,lod);
+        MeshData meshData = MeshGenerator.GenerateTerrainMap(mapData.heghtMap,meshHeightMultiplier,meshHeightCurve,lod,useFlatShading);
         lock(meshDataThreadInfoQueue){
             meshDataThreadInfoQueue.Enqueue(new MapThreadInfo<MeshData>(callback,meshData));
         }
@@ -147,6 +151,7 @@ public class MapGenerator : MonoBehaviour
     MapData GenerateMapData(Vector2 centre){
         float[,] noiseMap = Noise.GenerateNoiseMap(mapChunkSize, mapChunkSize, noiseScale, seed, octaves, persistance, lacunarity, centre + offset, normalizeMode);
 
+        bool[,] treeMap = new bool[mapChunkSize,mapChunkSize];
         Color[] colorMap = new Color[mapChunkSize*mapChunkSize];
         for(int y = 0; y<mapChunkSize; y++){
             for(int x = 0; x<mapChunkSize; x++){
@@ -154,6 +159,7 @@ public class MapGenerator : MonoBehaviour
                 noiseMap[x,y] = (useFlatCenterMap && centre == Vector2.zero)? Mathf.Abs(falloutMap[x,y]-1)*0.35f + (1-Mathf.Abs(falloutMap[x,y]-1))*noiseMap[x,y]:noiseMap[x,y];
                 float currentHeight = noiseMap [x,y];
 
+                //Color map
                 colorMap[x + y * mapChunkSize] = regions[0].color;
                 for(int i = 0; i < regions.Length; i++){
                     if(currentHeight >= regions[i].height){
@@ -162,10 +168,15 @@ public class MapGenerator : MonoBehaviour
                         break;
                     }
                 }
+
+                //Tree map
+                float xCoord = (float)x / (mapChunkSize-1) * noiseScale;
+                float yCoord = (float)y / (mapChunkSize-1) * noiseScale;
+                treeMap[x, mapChunkSize-1-y] = TreeGenerator.GenerateTreeMapUnit(new Vector2(xCoord,yCoord),currentHeight*80) && currentHeight > 0.4f && currentHeight <= 0.6f;
             }
         }
         
-        return new MapData(noiseMap,colorMap);
+        return new MapData(noiseMap,colorMap,treeMap);
     }
 
     //Thread data storage structrue
@@ -187,6 +198,6 @@ public class MapGenerator : MonoBehaviour
         if(octaves < 0){
             octaves = 0;
         }
-        falloutMap = FalloffGenerator.GenerateFalloffMap(mapChunkSize, !useFlatCenterMap);
+        falloutMap = FalloffGenerator.GenerateFalloffMap(mapChunkSize, useFlatCenterMap);
     }
 }

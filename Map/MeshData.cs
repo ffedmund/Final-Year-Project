@@ -10,8 +10,10 @@ public class MeshData
     public Vector2[] uvs;
 
     int triangleIndex;
+    bool useFlatShading;
 
-    public MeshData(int meshWidth, int meshHeight){
+    public MeshData(int meshWidth, int meshHeight, bool useFlatShading){
+        this.useFlatShading = useFlatShading;
         vertices = new Vector3[meshWidth*meshHeight];
         uvs = new Vector2[meshHeight*meshWidth];
         triangles = new int[(meshWidth-1)*(meshHeight-1)*6];
@@ -57,12 +59,31 @@ public class MeshData
         return Vector3.Cross(sideAB,sideAC).normalized;
     }
 
+    void FlashShading(){
+        Vector3[] flatShadedVertices = new Vector3[triangles.Length];
+        Vector2[] flatShadedUvs = new Vector2[triangles.Length];
+
+        for(int i = 0; i<triangles.Length; i++){
+            flatShadedVertices[i] = vertices[triangles[i]];
+            flatShadedUvs[i] = uvs[triangles[i]];
+            triangles[i] = i;
+        }
+
+        vertices = flatShadedVertices;
+        uvs = flatShadedUvs;
+    }
+
+    public void ProcessMesh(){
+        if(useFlatShading){
+            FlashShading();
+        }
+    }
+
     public Mesh CreateMesh(){
         Mesh mesh = new Mesh();
         mesh.vertices = vertices;
         mesh.triangles = triangles;
         mesh.uv = uvs;
-        // mesh.normals = CalculateNormals();
         mesh.RecalculateNormals();
         return mesh;
     }

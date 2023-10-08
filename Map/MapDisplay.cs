@@ -32,6 +32,6 @@ public class MapDisplay : MonoBehaviour
           {
                DestroyImmediate(transform.gameObject);
           }
-          GetComponent<TreeGenerator>().CreateTrees(meshTransform,treeMap,Vector3.zero,heightMap);
+          GetComponent<TreeGenerator>().CreateTrees(meshTransform,treeMap,Vector3.zero);
      }
 }

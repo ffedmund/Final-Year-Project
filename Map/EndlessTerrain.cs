@@ -10,7 +10,7 @@ using UnityEngine;
 **/
 public class EndlessTerrain : MonoBehaviour
 {   
-    public const float scale = 10;
+    public const float scale = 8;
     const float viewerMoveThresholdForChunkUpdate = 25f;
 
     public LODInfo[] detailLevels;
@@ -57,7 +57,7 @@ public class EndlessTerrain : MonoBehaviour
         }
 
         //Update Water Rendering
-        waterGenerator.CreateWaterMap(viewerPosition*scale);
+        waterGenerator.CreateWaterMap(viewerPosition);
     }
 
     //Check whether the terrain chunks is visible or not
