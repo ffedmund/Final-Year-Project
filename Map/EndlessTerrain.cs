@@ -55,9 +55,6 @@ public class EndlessTerrain : MonoBehaviour
             UpdateVisibleChunks();
             previousViewerPosition = viewerPosition;
         }
-
-        //Update Water Rendering
-        waterGenerator.CreateWaterMap(viewerPosition);
     }
 
     //Check whether the terrain chunks is visible or not

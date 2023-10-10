@@ -5,11 +5,12 @@ using UnityEngine;
 
 public class TerrainChunk
 {
+    public  MapData mapData;
+    
     GameObject meshObject;
+    Vector2 chunkCoordinate;
     Vector2 position; //coordinate in world space
     Bounds bounds;
-
-    MapData mapData;
 
     MeshRenderer meshRenderer;
     MeshFilter meshFilter;
@@ -26,6 +27,7 @@ public class TerrainChunk
     public TerrainChunk(Vector2 coordinate, int size, LODInfo[] detailLevels,Transform parent, Material material){
         this.detailLevels = detailLevels;
        
+        chunkCoordinate = coordinate;
         position = coordinate * size;
         bounds = new Bounds(position,Vector2.one*size);
         Vector3 positionV3 = new Vector3(position.x,0,position.y);
@@ -90,6 +92,7 @@ public class TerrainChunk
                         meshCollider.sharedMesh = collisionLODMesh.mesh;
                         if(!hasGeneratedTrees){
                             EndlessTerrain.treeGenerator.CreateTrees(meshObject.transform,mapData.treeMap,position);
+                            EndlessTerrain.waterGenerator.CreateWater(mapData.waterMap,chunkCoordinate);
                             hasGeneratedTrees = true;
                         }
                     }

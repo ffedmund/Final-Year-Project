@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.Threading;
+using JohnStairs.RCC;
 
 [System.Serializable]
 public struct TerrainType{
@@ -13,15 +14,16 @@ public struct TerrainType{
 
 //Store the map data for a new chunk
 public struct MapData{
-    public readonly float[,] heghtMap;
+    public readonly float[,] heightMap;
     public readonly Color[] colorMap;
     public readonly bool[,] treeMap;
+    public readonly int[,] waterMap;
 
-
-    public MapData(float[,] heightMap, Color[] colorMap, bool[,] treeMap){
-        this.heghtMap = heightMap;
+    public MapData(float[,] heightMap, Color[] colorMap, bool[,] treeMap, int[,] waterMap){
+        this.heightMap = heightMap;
         this.colorMap = colorMap;
         this.treeMap = treeMap;
+        this.waterMap = waterMap;
     }
 }
 
@@ -79,13 +81,13 @@ public class MapGenerator : MonoBehaviour
         MapDisplay mapDisplay = GetComponent<MapDisplay>();
         switch(drawMode){
             case DrawMode.NoiseMap:
-                mapDisplay.DrawTexture(TextureGenerator.TextureFromHeightMap(mapData.heghtMap));
+                mapDisplay.DrawTexture(TextureGenerator.TextureFromHeightMap(mapData.heightMap));
                 break;
             case DrawMode.ColorMap:
                 mapDisplay.DrawTexture(TextureGenerator.TextureFromColorMap(mapData.colorMap,mapChunkSize,mapChunkSize));
                 break;
             case DrawMode.MeshMap:
-                mapDisplay.DrawMesh(MeshGenerator.GenerateTerrainMap(mapData.heghtMap,meshHeightMultiplier,meshHeightCurve,EditorlevelOfDetail,useFlatShading),TextureGenerator.TextureFromColorMap(mapData.colorMap,mapChunkSize,mapChunkSize));
+                mapDisplay.DrawMesh(MeshGenerator.GenerateTerrainMap(mapData.heightMap,meshHeightMultiplier,meshHeightCurve,EditorlevelOfDetail,useFlatShading),TextureGenerator.TextureFromColorMap(mapData.colorMap,mapChunkSize,mapChunkSize));
                 break;
             case DrawMode.FalloutMap:
                 mapDisplay.DrawTexture(TextureGenerator.TextureFromHeightMap(falloutMap));
@@ -94,7 +96,7 @@ public class MapGenerator : MonoBehaviour
                 break;
         }
         if(generateTrees){
-            mapDisplay.DrawTree(mapData.treeMap, mapData.heghtMap);
+            mapDisplay.DrawTree(mapData.treeMap, mapData.heightMap);
         }
     }
 
@@ -122,7 +124,7 @@ public class MapGenerator : MonoBehaviour
     }
 
     void MeshDataThread(MapData mapData,int lod, Action<MeshData> callback){
-        MeshData meshData = MeshGenerator.GenerateTerrainMap(mapData.heghtMap,meshHeightMultiplier,meshHeightCurve,lod,useFlatShading);
+        MeshData meshData = MeshGenerator.GenerateTerrainMap(mapData.heightMap,meshHeightMultiplier,meshHeightCurve,lod,useFlatShading);
         lock(meshDataThreadInfoQueue){
             meshDataThreadInfoQueue.Enqueue(new MapThreadInfo<MeshData>(callback,meshData));
         }
@@ -152,6 +154,7 @@ public class MapGenerator : MonoBehaviour
         float[,] noiseMap = Noise.GenerateNoiseMap(mapChunkSize, mapChunkSize, noiseScale, seed, octaves, persistance, lacunarity, centre + offset, normalizeMode);
 
         bool[,] treeMap = new bool[mapChunkSize,mapChunkSize];
+        int[,] waterMap = new int[mapChunkSize,mapChunkSize];
         Color[] colorMap = new Color[mapChunkSize*mapChunkSize];
         for(int y = 0; y<mapChunkSize; y++){
             for(int x = 0; x<mapChunkSize; x++){
@@ -173,10 +176,12 @@ public class MapGenerator : MonoBehaviour
                 float xCoord = (float)x / (mapChunkSize-1) * noiseScale;
                 float yCoord = (float)y / (mapChunkSize-1) * noiseScale;
                 treeMap[x, mapChunkSize-1-y] = TreeGenerator.GenerateTreeMapUnit(new Vector2(xCoord,yCoord),currentHeight*80) && currentHeight > 0.4f && currentHeight <= 0.6f;
+            
+                //Water map
+                waterMap[x,y] = currentHeight < regions[1].height+0.05f?1:0;
             }
         }
-        
-        return new MapData(noiseMap,colorMap,treeMap);
+        return new MapData(noiseMap,colorMap,treeMap,waterMap);
     }
 
     //Thread data storage structrue

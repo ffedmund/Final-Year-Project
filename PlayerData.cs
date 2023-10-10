@@ -5,14 +5,18 @@ using UnityEngine;
 
 public class PlayerData{
     readonly string[] attributeKeys = {"level","honor","vitality","strength","intelligence","dexterity","endurance","luck"};
+    readonly string[] moneySign = {"","K","M","B"};
 
     Dictionary<string,int> _playerAttributesData;
+    
+    int _money;
 
     public PlayerData(){
         _playerAttributesData = new Dictionary<string, int>();
         foreach(string key in attributeKeys){
             _playerAttributesData[key] = 1;
         }
+        _money = 0;
     }
 
     public void UpdatePlayerData(string key, int value, bool isReplace = false) {
@@ -20,6 +24,21 @@ public class PlayerData{
             int originalValue = _playerAttributesData[key];
             _playerAttributesData[key] = isReplace? value:originalValue+value;
         }
+        if(key == "money"){
+            _money = isReplace? value:_money+value;
+        }
+    }
+
+    public string GetMoneyAmount(){
+        int temp = _money;
+        int count = 0;
+        string output = temp.ToString();
+        while(temp >= 10){
+            output = temp.ToString() + moneySign[count];
+            temp/=1000;
+            count++;
+        }
+        return output;
     }
 
     public int GetAttribute(string key){

@@ -3,22 +3,22 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class WaterGenerator: MonoBehaviour{
 
     [Range(1,100)]
     public float density;
-    public Material waterMaterial;
     [SerializeField]
     float waterShowingDistance;
     public LayerMask layerMask;
-
+    public Transform waterPlane;
 
     float chunkSize;
     float waterUnitSize;
     Vector2Int previousViewerCoordinate;
 
-    Dictionary<Vector2,GameObject> waterCoordinateDict = new Dictionary<Vector2, GameObject>();
+    Dictionary<Vector2,Dictionary<Vector2,GameObject>> waterCoordinateDict = new Dictionary<Vector2, Dictionary<Vector2,GameObject>>();
     List<GameObject> lastFrameVisibleWater = new List<GameObject>();
     
     void Awake(){
@@ -53,31 +53,38 @@ public class WaterGenerator: MonoBehaviour{
             for(int x = -waterVisibleInViewDist; x <= waterVisibleInViewDist; x++){
                 Vector2Int waterCoordinate = new Vector2Int(viewerCoordinate.x+x,viewerCoordinate.y+y);
                 if(waterCoordinateDict.ContainsKey(waterCoordinate) && waterCoordinateDict[waterCoordinate] != null){
-                    waterCoordinateDict[waterCoordinate].SetActive(true);
-                    lastFrameVisibleWater.Add(waterCoordinateDict[waterCoordinate]);
+                    // waterCoordinateDict[waterCoordinate].SetActive(true);
+                    // lastFrameVisibleWater.Add(waterCoordinateDict[waterCoordinate]);
                 }else{
-                    waterCoordinateDict[waterCoordinate] = CreateWaterPlane(waterUnitSize, waterCoordinate);
+                    // waterCoordinateDict[waterCoordinate] = CreateWaterPlane(waterUnitSize, waterCoordinate);
                 }
             }
         }
 
     }
 
-    public GameObject CreateWaterPlane(float scale,Vector2Int waterCoodinate){
-        Vector3 waterPlanePosition = new Vector3(waterCoodinate.x+0.1f,0,waterCoodinate.y+0.1f)*scale*10;
-        if(Physics.Raycast(waterPlanePosition, Vector3.up ,out RaycastHit hit, 100f, layerMask)){
-            if(hit.collider != null){
-                return null;
+    public void CreateWater(int[,] waterMap,Vector2 chunkCoordinate){
+        int size = waterMap.GetLength(0);
+        int chunkSize = MapGenerator.mapChunkSize - 1;
+
+        if(!waterCoordinateDict.ContainsKey(chunkCoordinate)){
+            waterCoordinateDict[chunkCoordinate] = new Dictionary<Vector2, GameObject>();
+            for(int y = 0; y < size; y++){
+                for(int x = 0; x < size; x++){
+                    if(waterMap[x,y] == 1){
+                        Vector3 position = new Vector3((chunkCoordinate.x*chunkSize+x-size/2-0.1f)*EndlessTerrain.scale,-0.5f,(chunkCoordinate.y*chunkSize+size/2-y-0.1f)*EndlessTerrain.scale);
+                        GameObject waterPlaneObject = Instantiate(waterPlane.gameObject,position,Quaternion.identity);
+                        waterPlaneObject.name = String.Format("Chunk[{0},{1}] Water({2},{3})",chunkCoordinate.x,chunkCoordinate.y,x,y);
+                        waterPlaneObject.transform.SetParent(this.transform);
+                        waterPlaneObject.transform.localScale = new Vector3(1,10/EndlessTerrain.scale,1)*EndlessTerrain.scale/10;
+                        waterCoordinateDict[chunkCoordinate][new Vector2(x,y)] = waterPlaneObject;
+                        // waterPlaneObject.SetActive(false);
+                    }else{
+                        waterCoordinateDict[chunkCoordinate][new Vector2(x,y)] = null;
+                    }
+                }
             }
         }
-        GameObject waterMap = GameObject.CreatePrimitive(PrimitiveType.Plane);
-        waterMap.name = "Water Plane["+waterCoodinate.ToString()+"]";
-        waterMap.transform.localScale = new Vector3(scale,1,scale);
-        waterMap.transform.position = waterPlanePosition;
-        waterMap.GetComponent<MeshRenderer>().material = waterMaterial;
-        waterMap.transform.SetParent(transform);
-        waterMap.SetActive(false);
-        return waterMap;
     }
 
 

@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class TreeGenerator: MonoBehaviour
 {
-    public const float coverage = 20;
+    public const float coverage = 35;
 
     [SerializeField]
     GameObject[] treePrefabs;

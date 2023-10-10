@@ -13,32 +13,33 @@ namespace FYP
         public float mouseY;
 
         public bool b_Input;
+        public bool rb_Input;
+        public bool rt_Input;
+        public bool d_Pad_Up;
+        public bool d_Pad_Down;
+        public bool d_Pad_Left;
+        public bool d_Pad_Right;
 
         public bool rollFlag;
         public bool sprintFlag;
+        public bool comboFlag;
         public float rollInputTimer;
-        public bool isInteracting;
+        
 
         PlayerControls inputActions;
-        CameraHandler cameraHandler;
+        PlayerAttacker playerAttacker;
+        PlayerInventory playerInventory;
+        PlayerManager playerManager;
 
         Vector2 movementInput;
         Vector2 cameraInput;
 
         private void Awake()
         {
-            cameraHandler = CameraHandler.singleton;
-        }
-
-        private void FixedUpdate()
-        {
-            float delta = Time.deltaTime;
-
-            if (cameraHandler != null)
-            {
-                cameraHandler.FollowTarget(delta);
-                cameraHandler.HandleCameraRotation(delta, mouseX, mouseY);
-            }
+            // playerAttacker = GetComponentInChildren<PlayerAttacker>();
+            playerAttacker = GetComponent<PlayerAttacker>();
+            playerInventory = GetComponent<PlayerInventory>();
+            playerManager = GetComponent<PlayerManager>();
         }
 
         public void OnEnable()
@@ -62,6 +63,8 @@ namespace FYP
         {
             MoveInput(delta);
             HandleRollInput(delta);
+            HandleAttackInput(delta);
+            HandleQuickSlotsInput();
         }
 
         void MoveInput(float delta)
@@ -93,6 +96,60 @@ namespace FYP
                 }
 
                 rollInputTimer = 0;
+            }
+        }
+
+        private void HandleAttackInput(float delta)
+        {
+            inputActions.PlayerActions.RB.performed += i => rb_Input = true;
+            inputActions.PlayerActions.RT.performed += i => rt_Input = true;
+
+            if (rb_Input)
+            {
+                if (playerManager.canDoCombo)
+                {
+                    comboFlag = true;
+                    playerAttacker.HandleWeaponCombo(playerInventory.rightWeapon);
+                    comboFlag = false;
+                }
+                else
+                {
+                    if (playerManager.isInteracting)
+                        return;
+
+                    if (playerManager.canDoCombo)
+                        return;
+
+                    playerAttacker.HandleLightAttack(playerInventory.rightWeapon);
+                }
+                
+                playerAttacker.HandleLightAttack(playerInventory.rightWeapon);
+            }
+
+            if (rt_Input)
+            {
+                if (playerManager.isInteracting)
+                    return;
+
+                if (playerManager.canDoCombo)
+                    return;
+
+                playerAttacker.HandleHeavyAttack(playerInventory.rightWeapon);
+            }
+        }
+
+        private void HandleQuickSlotsInput()
+        {
+            inputActions.PlayerActions.DPadRight.performed += i => d_Pad_Right = true;
+            inputActions.PlayerActions.DPadLeft.performed += i => d_Pad_Left = true;
+
+            if(d_Pad_Right)
+            {
+                playerInventory.ChangeRightWeapon();
+            }
+            else if (d_Pad_Left)
+            {
+                playerInventory.ChangeLeftWeapon();
             }
         }
     }
