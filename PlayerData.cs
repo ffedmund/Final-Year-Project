@@ -3,12 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class PlayerData{
     readonly string[] attributeKeys = {"level","honor","vitality","strength","intelligence","dexterity","endurance","luck"};
     readonly string[] moneySign = {"","K","M","B"};
 
+    public List<Quest> quests = new List<Quest>();
+
     Dictionary<string,int> _playerAttributesData;
-    
     int _money;
 
     public PlayerData(){

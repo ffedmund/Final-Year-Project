@@ -6,6 +6,8 @@ namespace FYP
 {
     public class PlayerStats : MonoBehaviour
     {
+        public PlayerData playerData = new PlayerData();
+
         public int healthLevel = 10;
         public int maxHealth;
         public int currentHealth;
