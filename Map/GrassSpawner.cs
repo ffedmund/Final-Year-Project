@@ -8,6 +8,8 @@ public class GrassSpawner : MonoBehaviour {
     public Material material;
     [Range(0.1f,100)]
     public float density;
+    [Range(1,20)]
+    public int visibleRange;
     List<Matrix4x4[]> matricesList = new List<Matrix4x4[]>();
     Material matclone;
     Vector3 position;
@@ -37,7 +39,6 @@ public class GrassSpawner : MonoBehaviour {
         if(new Vector2(coordinateX,coordinateY) != previousCoordinate){
             matricesList.Clear();
             float diastem = Mathf.RoundToInt(1.0f/density*1000)/1000.0f;
-            int visibleRange = 8;
             previousCoordinate = new Vector2(coordinateX,coordinateY);
             matclone = new Material(material);
 
