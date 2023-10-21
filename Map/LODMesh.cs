@@ -14,6 +14,7 @@ public class LODMesh
     public Mesh mesh;
     public bool hasRequestedMesh;
     public bool hasMesh;
+    public MeshData meshData;
     int lod;
     System.Action updateCallback;
 
@@ -24,6 +25,7 @@ public class LODMesh
 
     void OnMeshDataReceived(MeshData meshData){
         this.mesh = meshData.CreateMesh();
+        this.meshData = meshData;
         hasMesh = true;
         updateCallback();
     }

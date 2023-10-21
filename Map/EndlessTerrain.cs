@@ -25,7 +25,7 @@ public class EndlessTerrain : MonoBehaviour
     public static TreeGenerator treeGenerator;
 
     Vector2 previousViewerPosition;
-    int chunkSize; //240
+    int chunkSize; //94
     int chunkVisibleInViewDist; //number of chunk can see in one direction
 
     Dictionary<Vector2, TerrainChunk> terrainChunkDictionary = new Dictionary<Vector2, TerrainChunk>();// keep the reference for all generated terrain chunks
@@ -43,6 +43,7 @@ public class EndlessTerrain : MonoBehaviour
         viewerPosition = Vector3.zero;
 
         UpdateVisibleChunks();
+        GameObject.FindAnyObjectByType<GrassSpawner>().SetUpTerrainChunkpDictionary(terrainChunkDictionary);
     }
 
     // Update is called once per frame
@@ -55,6 +56,7 @@ public class EndlessTerrain : MonoBehaviour
             UpdateVisibleChunks();
             previousViewerPosition = viewerPosition;
         }
+       if(terrainChunkDictionary.ContainsKey (Vector2.zero))GameObject.FindAnyObjectByType<GrassSpawner>().UpdateVisibleGrass(terrainChunkDictionary[Vector2.zero].mapData.heightMap,EndlessTerrain.viewerPosition);
     }
 
     //Check whether the terrain chunks is visible or not

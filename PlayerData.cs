@@ -21,13 +21,21 @@ public class PlayerData{
         _money = 0;
     }
 
-    public void UpdatePlayerData(string key, int value, bool isReplace = false) {
+    public void AddPlayerData(string key, int value) {
         if(_playerAttributesData.ContainsKey(key)){
-            int originalValue = _playerAttributesData[key];
-            _playerAttributesData[key] = isReplace? value:originalValue+value;
+            _playerAttributesData[key] += value;
         }
         if(key == "money"){
-            _money = isReplace? value:_money+value;
+            _money += value;
+        }
+    }
+
+    public void ReplacePlayerData(string key, int value){
+        if(_playerAttributesData.ContainsKey(key)){
+            _playerAttributesData[key] = value;
+        }
+        if(key == "money"){
+            _money = value;
         }
     }
 

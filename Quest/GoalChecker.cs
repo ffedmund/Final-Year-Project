@@ -1,3 +1,4 @@
+[System.Serializable]
 public class GoalChecker{
     GoalType goalType;
     int currentAmount;

@@ -11,6 +11,9 @@ public class MapDisplay : MonoBehaviour
 
    public GameObject[] treePrefabs;
 
+   public WaterGenerator waterGenerator;
+   public GrassSpawner grassSpawner;
+
      //Create Texture(Color)
      public void DrawTexture(Texture2D texture){
           textureRender.sharedMaterial.mainTexture = texture;
@@ -18,13 +21,19 @@ public class MapDisplay : MonoBehaviour
      }
 
      //Create Mesh(Shape)
-     public void DrawMesh(MeshData meshData, Texture2D texture2D){
+     public void DrawMesh(MapData mapData,MeshData meshData, Texture2D texture2D){
           meshFilter.sharedMesh = meshData.CreateMesh();
           meshRenderer.sharedMaterial.mainTexture = texture2D;
           if(TryGetComponent(out MapGenerator mapGenerator)){
                meshTransform.localScale = mapGenerator.useEndlessTerrainScale?Vector3.one*EndlessTerrain.scale:meshTransform.localScale;
           }
-          // WaterGenerator.CreateWaterMap(Vector3.zero,waterMaterial);
+          if(waterGenerator.transform.childCount>0){
+               foreach(Transform child in  waterGenerator.transform){
+                    DestroyImmediate(child.gameObject);
+               }
+          }
+          waterGenerator.CreateWater(mapData.waterMap,Vector2.zero);
+          grassSpawner.GenerateGrass(mapData.heightMap,Vector2.zero,meshFilter.mesh.bounds);
      }
 
      public void DrawTree(bool[,] treeMap, float[,] heightMap){
