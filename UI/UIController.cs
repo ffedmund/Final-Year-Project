@@ -61,7 +61,7 @@ namespace FYP
             if(Input.GetKeyDown(KeyCode.P)){
                 playerInfoUI.gameObject.SetActive(!playerInfoUI.gameObject.active);
                 playerInfoUI.FindChild("ContentArea").GetComponent<PlayerInfoContentScript>().ShowBackgroundInfo();
-                DataReader.ReadDataBase();
+                DataReader.ReadBackgroundDataBase();
                 activeUIWindows.Add(playerInfoUI);
             }
             if (Input.GetKeyDown(KeyCode.F))
