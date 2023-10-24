@@ -22,6 +22,7 @@ public class DayCycleManager : MonoBehaviour
         time += Time.deltaTime;
         currentTime = time%360;
         UpdateLightIntensity();
+        UpdateLightAngle();
     }
 
     void UpdateLightIntensity(){

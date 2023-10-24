@@ -18,10 +18,16 @@ public class PlayerInfoContentScript : MonoBehaviour
         PlayerBackground playerBackground = DataReader.backgorundDictionary[playerBackgroundId];
         Debug.Log(playerBackground.description);
         leftText.SetText("Background\n"+playerBackground.description);
-        rightText.SetText("Skill");
+        rightText.SetText("Target");
     }
 
     public void ShowTalentInfo(){
+        leftText.SetText("Skill");
+        rightText.SetText("Talent");
+        
+    }
 
+    public void ShowMissionInfo(){
+        
     }
 }

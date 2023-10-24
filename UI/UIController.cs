@@ -4,57 +4,131 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Video;
 
-public class UIController : MonoBehaviour {
+namespace FYP
+{
+    public class UIController : MonoBehaviour
+    {
+        public PlayerInventory playerInventory;
+        public EquipmentWindowUI equipmentWindowUI;
 
-    public Transform stateUI;
-    public Transform interactionTipUI;
-    public Transform questUI;
-    public Transform playerInfoUI;
-    public static PlayerData playerData;
+        [Header("UI Windows")]
+        public GameObject hudWindow;
+        public GameObject selectWindow;
+        public GameObject weaponInventoryWindow;
 
-    public Transform currentInteractObject;
 
-    List<Transform> activeUIWindows = new List<Transform>();
+        [Header("Weapon Inventory")]
+        public GameObject weaponInventorySlotPrefab;
+        public Transform weaponInventorySlotParent;
+        WeaponInventorySlot[] weaponInventorySlots;
 
-    void Start(){
-        playerData = FindAnyObjectByType<PlayerStats>().playerData;
-        DataReader.ReadDataBase();
-    }
+        public Transform stateUI;
+        public Transform interactionTipUI;
+        public Transform questUI;
+        public Transform playerInfoUI;
+        public static PlayerData playerData;
 
-    [System.Obsolete]
-    private void Update() {
-        questUI.gameObject.SetActive(playerData.quests.Count > 0);
+        public Transform currentInteractObject;
 
-        if(Input.GetKeyDown(KeyCode.U)){
-            stateUI.gameObject.SetActive(!stateUI.gameObject.active);
-            stateUI.GetComponent<StatusUIManager>().UpdateText();
-            DataReader.ReadDataBase();
-            activeUIWindows.Add(stateUI);
+        List<Transform> activeUIWindows = new List<Transform>();
+
+        private void Awake()
+        {
+            // equipmentWindowUI = FindObjectOfType<EquipmentWindowUI>();
         }
-        if(Input.GetKeyDown(KeyCode.P)){
-            playerInfoUI.gameObject.SetActive(!playerInfoUI.gameObject.active);
-            playerInfoUI.FindChild("ContentArea").GetComponent<PlayerInfoContentScript>().ShowBackgroundInfo();
-            DataReader.ReadDataBase();
-            activeUIWindows.Add(playerInfoUI);
+
+        void Start()
+        {
+            playerData = FindAnyObjectByType<PlayerStats>().playerData;
+
+            weaponInventorySlots = weaponInventorySlotParent.GetComponentsInChildren<WeaponInventorySlot>();
+
+            equipmentWindowUI.LoadWeaponOnEquipmentScreen(playerInventory);
         }
-        if(Input.GetKeyDown(KeyCode.F)){
-            if(currentInteractObject != null && currentInteractObject.GetComponent<InteractableScript>().isUITrigger){
-                currentInteractObject.GetComponent<InteractableScript>().targetTransform.gameObject.SetActive(true);
-                activeUIWindows.Add(currentInteractObject.GetComponent<InteractableScript>().targetTransform);
+
+        [System.Obsolete]
+        private void Update()
+        {
+            questUI.gameObject.SetActive(playerData.quests.Count > 0);
+
+            if (Input.GetKeyDown(KeyCode.U))
+            {
+                stateUI.gameObject.SetActive(!stateUI.gameObject.active);
+                stateUI.GetComponent<StatusUIManager>().UpdateText();
+                DataReader.ReadQuestDataBase();
+                activeUIWindows.Add(stateUI);
+            }
+            if(Input.GetKeyDown(KeyCode.P)){
+                playerInfoUI.gameObject.SetActive(!playerInfoUI.gameObject.active);
+                playerInfoUI.FindChild("ContentArea").GetComponent<PlayerInfoContentScript>().ShowBackgroundInfo();
+                DataReader.ReadDataBase();
+                activeUIWindows.Add(playerInfoUI);
+            }
+            if (Input.GetKeyDown(KeyCode.F))
+            {
+                if (currentInteractObject != null && currentInteractObject.GetComponent<InteractableScript>().isUITrigger)
+                {
+                    currentInteractObject.GetComponent<InteractableScript>().targetTransform.gameObject.SetActive(true);
+                    activeUIWindows.Add(currentInteractObject.GetComponent<InteractableScript>().targetTransform);
+                }
+            }
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                foreach (Transform window in activeUIWindows)
+                {
+                    window.gameObject.SetActive(false);
+                }
+                activeUIWindows.Clear();
+            }
+            if (playerData.quests.Count > 0)
+            {
+                string questInfo = "Quest List\n";
+                foreach (Quest quest in playerData.quests)
+                {
+                    questInfo += quest.ToString();
+                }
+                questUI.GetChild(0).GetComponent<TextMeshProUGUI>().SetText(questInfo);
             }
         }
-        if(Input.GetKeyDown(KeyCode.Escape)){
-            foreach(Transform window in activeUIWindows){
-                window.gameObject.SetActive(false);
+        
+        public void UpdateUI()
+        {
+            #region Weapon Inventory Slots
+
+            for (int i = 0; i < weaponInventorySlots.Length; i++)
+            {
+                if (i < playerInventory.weaponsInventory.Count)
+                {
+                    if (weaponInventorySlots.Length < playerInventory.weaponsInventory.Count)
+                    {
+                        Instantiate(weaponInventorySlotPrefab, weaponInventorySlotParent);
+                        weaponInventorySlots = weaponInventorySlotParent.GetComponentsInChildren<WeaponInventorySlot>();
+                    }
+                    
+                    weaponInventorySlots[i].AddItem(playerInventory.weaponsInventory[i]);
+                }
+                else
+                {
+                    weaponInventorySlots[i].ClearInventorySlot();
+                }
             }
-            activeUIWindows.Clear();
+
+            #endregion
         }
-        if(playerData.quests.Count > 0){
-            string questInfo = "Quest List\n";
-            foreach(Quest quest in playerData.quests){
-                questInfo += quest.ToString();
-            }
-            questUI.GetChild(0).GetComponent<TextMeshProUGUI>().SetText(questInfo);
+
+        public void OpenSelectWindow()
+        {
+            selectWindow.SetActive(true);
+        }
+
+        public void CloseSelectWindow()
+        {
+            selectWindow.SetActive(false);
+        }
+
+        public void CloseAllInventoryWindows()
+        {
+            weaponInventoryWindow.SetActive(false);
         }
     }
 }

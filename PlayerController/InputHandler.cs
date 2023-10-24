@@ -12,9 +12,13 @@ namespace FYP
         public float mouseX;
         public float mouseY;
 
+        public bool a_Input;
         public bool b_Input;
         public bool rb_Input;
         public bool rt_Input;
+        public bool jump_Input;
+        public bool inventory_Input;
+
         public bool d_Pad_Up;
         public bool d_Pad_Down;
         public bool d_Pad_Left;
@@ -23,13 +27,15 @@ namespace FYP
         public bool rollFlag;
         public bool sprintFlag;
         public bool comboFlag;
+        public bool inventoryFlag;
         public float rollInputTimer;
-        
+
 
         PlayerControls inputActions;
         PlayerAttacker playerAttacker;
         PlayerInventory playerInventory;
         PlayerManager playerManager;
+        UIController uiController;
 
         Vector2 movementInput;
         Vector2 cameraInput;
@@ -40,6 +46,7 @@ namespace FYP
             playerAttacker = GetComponent<PlayerAttacker>();
             playerInventory = GetComponent<PlayerInventory>();
             playerManager = GetComponent<PlayerManager>();
+            uiController = FindObjectOfType<UIController>();
         }
 
         public void OnEnable()
@@ -49,6 +56,13 @@ namespace FYP
                 inputActions = new PlayerControls();
                 inputActions.PlayerMovement.Movement.performed += inputActions => movementInput = inputActions.ReadValue<Vector2>();
                 inputActions.PlayerMovement.Camera.performed += i => cameraInput = i.ReadValue<Vector2>();
+                inputActions.PlayerActions.RB.performed += i => rb_Input = true;
+                inputActions.PlayerActions.RT.performed += i => rt_Input = true;
+                inputActions.PlayerActions.DPadRight.performed += i => d_Pad_Right = true;
+                inputActions.PlayerActions.DPadLeft.performed += i => d_Pad_Left = true;
+                inputActions.PlayerActions.A.performed += i => a_Input = true;
+                inputActions.PlayerActions.Jump.performed += i => jump_Input = true;
+                inputActions.PlayerActions.Inventory.performed += i => inventory_Input = true;
             }
 
             inputActions.Enable();
@@ -65,6 +79,7 @@ namespace FYP
             HandleRollInput(delta);
             HandleAttackInput(delta);
             HandleQuickSlotsInput();
+            HandleInventoryInput();
         }
 
         void MoveInput(float delta)
@@ -81,6 +96,7 @@ namespace FYP
             // b_Input = inputActions.PlayerActions.Roll.phase == UnityEngine.InputSystem.InputActionPhase.Started;
             // b_Input = inputActions.PlayerActions.Roll.triggered;
             b_Input = inputActions.PlayerActions.Roll.IsPressed();
+            sprintFlag = b_Input;
 
             if (b_Input)
             {
@@ -101,9 +117,6 @@ namespace FYP
 
         private void HandleAttackInput(float delta)
         {
-            inputActions.PlayerActions.RB.performed += i => rb_Input = true;
-            inputActions.PlayerActions.RT.performed += i => rt_Input = true;
-
             if (rb_Input)
             {
                 if (playerManager.canDoCombo)
@@ -122,7 +135,7 @@ namespace FYP
 
                     playerAttacker.HandleLightAttack(playerInventory.rightWeapon);
                 }
-                
+
                 playerAttacker.HandleLightAttack(playerInventory.rightWeapon);
             }
 
@@ -140,16 +153,37 @@ namespace FYP
 
         private void HandleQuickSlotsInput()
         {
-            inputActions.PlayerActions.DPadRight.performed += i => d_Pad_Right = true;
-            inputActions.PlayerActions.DPadLeft.performed += i => d_Pad_Left = true;
+            // inputActions.PlayerActions.DPadRight.performed += i => d_Pad_Right = true;
+            // inputActions.PlayerActions.DPadLeft.performed += i => d_Pad_Left = true;
 
-            if(d_Pad_Right)
+            if (d_Pad_Right)
             {
                 playerInventory.ChangeRightWeapon();
             }
             else if (d_Pad_Left)
             {
                 playerInventory.ChangeLeftWeapon();
+            }
+        }
+
+        private void HandleInventoryInput()
+        {
+            if (inventory_Input)
+            {
+                inventoryFlag = !inventoryFlag;
+
+                if (inventoryFlag)
+                {
+                    uiController.OpenSelectWindow();
+                    uiController.UpdateUI();
+                    uiController.hudWindow.SetActive(false);
+                }
+                else
+                {
+                    uiController.CloseSelectWindow();
+                    uiController.CloseAllInventoryWindows();
+                    uiController.hudWindow.SetActive(true);
+                }
             }
         }
     }

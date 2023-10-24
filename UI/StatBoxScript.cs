@@ -3,16 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class StatBoxScript : MonoBehaviour
+namespace FYP
 {
-    [SerializeField]
-    Transform[] stateBoxes;
+    public class StatBoxScript : MonoBehaviour
+    {
+        [SerializeField]
+        Transform[] stateBoxes;
 
-    public void UpdateText(){
-        string[] playerAttributesArray = UIController.playerData.ToStringArray();
-        for(int i = 0; i < playerAttributesArray.Length; i++){
-            stateBoxes[i].GetComponent<TextMeshProUGUI>().SetText(playerAttributesArray[i]);
+        public void UpdateText()
+        {
+            string[] playerAttributesArray = UIController.playerData.ToStringArray();
+            for (int i = 0; i < playerAttributesArray.Length; i++)
+            {
+                stateBoxes[i].GetComponent<TextMeshProUGUI>().SetText(playerAttributesArray[i]);
+            }
         }
-    }
 
+    }
 }

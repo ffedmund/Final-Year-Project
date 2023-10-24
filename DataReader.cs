@@ -14,21 +14,9 @@ public static class DataReader{
     public static List<Quest> questList = new List<Quest>();
     public static Dictionary<int,PlayerBackground> backgorundDictionary = new Dictionary<int, PlayerBackground>();
 
-    public static void ReadDataBase(){
-        questList.Clear();
-
+    public static void ReadBackgroundDataBase(){
         XmlDocument xmlDoc = new XmlDocument();
-        xmlDoc.Load("./Assets/GameData/Data.xml");
-
-        XmlNodeList passiveList = xmlDoc.GetElementsByTagName("passive");
-        foreach (XmlNode node in passiveList)
-        {
-            string name = node["name"].InnerText;
-            string id = node["id"].InnerText;
-            string description = node["description"].InnerText;
-            string iconId = node["icon_id"].InnerText;
-            string background = node["background"].InnerText;
-        }
+        xmlDoc.Load("./Assets/GameData/BackgroundData.xml");
 
         XmlNodeList backgroundList = xmlDoc.GetElementsByTagName("background");
         foreach (XmlNode node in backgroundList)
@@ -41,16 +29,13 @@ public static class DataReader{
                 backgorundDictionary.Add(playerBackground.id,playerBackground);
             }
         }
+    }
 
-        XmlNodeList artifactsList = xmlDoc.GetElementsByTagName("artifacts");
-        foreach (XmlNode node in artifactsList)
-        {
-            string name = node["name"].InnerText;
-            string id = node["id"].InnerText;
-            string iconId = node["icon_id"].InnerText;
-            string prefabId = node["prefab_id"].InnerText;
-            string description = node["description"].InnerText;
-        }
+    public static void ReadQuestDataBase(){
+        questList.Clear();
+
+        XmlDocument xmlDoc = new XmlDocument();
+        xmlDoc.Load("./Assets/GameData/QuestData.xml");
 
         XmlNodeList questDataList = xmlDoc.GetElementsByTagName("quest");
         foreach (XmlNode node in questDataList)
@@ -66,6 +51,23 @@ public static class DataReader{
             Quest quest = new Quest(title,description,moneyReward,honorReward);
             quest.goalChecker = new GoalChecker(goalType, targetAmount);
             questList.Add(quest);
+        }
+    }
+
+    public static void ReadDataBase(){
+        questList.Clear();
+
+        XmlDocument xmlDoc = new XmlDocument();
+        xmlDoc.Load("./Assets/GameData/Data.xml");
+
+        XmlNodeList artifactsList = xmlDoc.GetElementsByTagName("artifacts");
+        foreach (XmlNode node in artifactsList)
+        {
+            string name = node["name"].InnerText;
+            string id = node["id"].InnerText;
+            string iconId = node["icon_id"].InnerText;
+            string prefabId = node["prefab_id"].InnerText;
+            string description = node["description"].InnerText;
         }
     }
 }
