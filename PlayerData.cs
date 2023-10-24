@@ -5,7 +5,7 @@ using UnityEngine;
 
 [System.Serializable]
 public class PlayerData{
-    readonly string[] attributeKeys = {"level","honor","vitality","strength","intelligence","dexterity","endurance","luck"};
+    readonly string[] attributeKeys = {"backgroundId","level","honor","vitality","strength","intelligence","dexterity","endurance","luck"};
     readonly string[] moneySign = {"","K","M","B"};
 
     public List<Quest> quests = new List<Quest>();
@@ -60,10 +60,10 @@ public class PlayerData{
     }
 
     public string[] ToStringArray(bool fullAttributes = false){
-        int outputLength = _playerAttributesData.Count - (fullAttributes?0:2);
+        int outputLength = _playerAttributesData.Count - (fullAttributes?0:3);
         string[] output = new string[outputLength];
         int count = 0;
-        for(int i = fullAttributes?0:2; i < _playerAttributesData.Count; i++){
+        for(int i = fullAttributes?0:3; i < _playerAttributesData.Count; i++){
             output[count++] = string.Format("{0}: {1}",attributeKeys[i],_playerAttributesData[attributeKeys[i]]);
         }
         return output;

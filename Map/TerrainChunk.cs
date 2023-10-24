@@ -93,7 +93,7 @@ public class TerrainChunk
                         if(!hasGeneratedTrees){
                             EndlessTerrain.treeGenerator.CreateTrees(meshObject.transform,mapData.treeMap,position);
                             EndlessTerrain.waterGenerator.CreateWater(mapData.waterMap,chunkCoordinate);
-                            // GameObject.FindAnyObjectByType<GrassSpawner>().GenerateGrass(mapData.heightMap,chunkCoordinate,meshCollider.bounds);
+                            EndlessTerrain.monsterLairGenerator.CreateMonsterLair(mapData.monsterLairPositionArray,position);
                             hasGeneratedTrees = true;
                         }
                     }

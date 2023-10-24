@@ -23,6 +23,9 @@ public class EndlessTerrain : MonoBehaviour
     public static MapGenerator mapGenerator;
     public static WaterGenerator waterGenerator;
     public static TreeGenerator treeGenerator;
+    public static GrassSpawner grassSpawner;
+    public static MonsterLairGenerator monsterLairGenerator;
+
 
     Vector2 previousViewerPosition;
     int chunkSize; //94
@@ -37,13 +40,15 @@ public class EndlessTerrain : MonoBehaviour
         mapGenerator = FindObjectOfType<MapGenerator>();
         waterGenerator = FindObjectOfType<WaterGenerator>();
         treeGenerator = FindObjectOfType<TreeGenerator>();
+        monsterLairGenerator = FindObjectOfType<MonsterLairGenerator>();
+        grassSpawner = FindObjectOfType<GrassSpawner>();
         maxViewDist = detailLevels[detailLevels.Length-1].visibleDistanceThreshold;
         chunkSize = MapGenerator.mapChunkSize - 1;
         chunkVisibleInViewDist = Mathf.RoundToInt(maxViewDist/chunkSize);
         viewerPosition = Vector3.zero;
 
         UpdateVisibleChunks();
-        GameObject.FindAnyObjectByType<GrassSpawner>().SetUpTerrainChunkpDictionary(terrainChunkDictionary);
+        grassSpawner.SetUpTerrainChunkpDictionary(terrainChunkDictionary);
     }
 
     // Update is called once per frame
@@ -56,7 +61,7 @@ public class EndlessTerrain : MonoBehaviour
             UpdateVisibleChunks();
             previousViewerPosition = viewerPosition;
         }
-       if(terrainChunkDictionary.ContainsKey (Vector2.zero))GameObject.FindAnyObjectByType<GrassSpawner>().UpdateVisibleGrass(terrainChunkDictionary[Vector2.zero].mapData.heightMap,EndlessTerrain.viewerPosition);
+       if(terrainChunkDictionary.ContainsKey (Vector2.zero))grassSpawner.UpdateVisibleGrass(terrainChunkDictionary[Vector2.zero].mapData.heightMap,viewerPosition);
     }
 
     //Check whether the terrain chunks is visible or not

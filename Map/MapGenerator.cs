@@ -18,12 +18,14 @@ public struct MapData{
     public readonly Color[] colorMap;
     public readonly bool[,] treeMap;
     public readonly int[,] waterMap;
+    public readonly List<Vector3> monsterLairPositionArray;
 
-    public MapData(float[,] heightMap, Color[] colorMap, bool[,] treeMap, int[,] waterMap){
+    public MapData(float[,] heightMap, Color[] colorMap, bool[,] treeMap, int[,] waterMap, List<Vector3> monsterLairPositionArray){
         this.heightMap = heightMap;
         this.colorMap = colorMap;
         this.treeMap = treeMap;
         this.waterMap = waterMap;
+        this.monsterLairPositionArray = monsterLairPositionArray;
     }
 }
 
@@ -181,7 +183,41 @@ public class MapGenerator : MonoBehaviour
                 waterMap[x,y] = currentHeight < regions[1].height+0.05f?1:0;
             }
         }
-        return new MapData(noiseMap,colorMap,treeMap,waterMap);
+
+        //Monster’s Lair map
+        int numberOfLairs = 8; // or however many lairs you want
+        int maxAttempts = 1000; 
+        System.Random random = new System.Random(seed);
+        float minHeight = 0.3f; // minimum height for a lair
+        float maxHeight = 0.65f; // maximum height for a lair
+
+        List<Vector3> monsterLairCenters = new List<Vector3>();
+
+        for (int i = 0; i < numberOfLairs; i++){
+            int x, y;
+            int attempts = 0;
+            do{
+                x = random.Next(1, mapChunkSize - 2);
+                y = random.Next(1, mapChunkSize - 2);
+                attempts++;
+            }
+            while ((noiseMap[x, y] < minHeight || noiseMap[x, y] > maxHeight) && useFlatCenterMap && centre == Vector2.zero && noiseMap[x,y] <= 0.5f && attempts < maxAttempts && waterMap[x,y] == 1);
+
+            // Store the center position of the Monster's Lair
+            if (attempts < maxAttempts){
+                monsterLairCenters.Add(new Vector3(x-mapChunkSize/2,noiseMap[x,y],mapChunkSize/2-y));
+            }
+        }
+
+        // string log = "";
+        // foreach(var vector in lairCenters){
+        //     log += vector + " ";
+        // }
+
+        // Debug.Log(log);
+
+
+        return new MapData(noiseMap,colorMap,treeMap,waterMap,monsterLairCenters);
     }
 
     //Thread data storage structrue

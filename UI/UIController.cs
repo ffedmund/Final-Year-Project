@@ -9,6 +9,7 @@ public class UIController : MonoBehaviour {
     public Transform stateUI;
     public Transform interactionTipUI;
     public Transform questUI;
+    public Transform playerInfoUI;
     public static PlayerData playerData;
 
     public Transform currentInteractObject;
@@ -17,6 +18,7 @@ public class UIController : MonoBehaviour {
 
     void Start(){
         playerData = FindAnyObjectByType<PlayerStats>().playerData;
+        DataReader.ReadDataBase();
     }
 
     [System.Obsolete]
@@ -28,6 +30,12 @@ public class UIController : MonoBehaviour {
             stateUI.GetComponent<StatusUIManager>().UpdateText();
             DataReader.ReadDataBase();
             activeUIWindows.Add(stateUI);
+        }
+        if(Input.GetKeyDown(KeyCode.P)){
+            playerInfoUI.gameObject.SetActive(!playerInfoUI.gameObject.active);
+            playerInfoUI.FindChild("ContentArea").GetComponent<PlayerInfoContentScript>().ShowBackgroundInfo();
+            DataReader.ReadDataBase();
+            activeUIWindows.Add(playerInfoUI);
         }
         if(Input.GetKeyDown(KeyCode.F)){
             if(currentInteractObject != null && currentInteractObject.GetComponent<InteractableScript>().isUITrigger){

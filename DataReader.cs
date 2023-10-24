@@ -3,9 +3,16 @@ using System.Diagnostics;
 using System.Xml;
 using UnityEngine;
 
+public struct PlayerBackground{
+    public int id;
+    public string role;
+    public string description;
+}
+
 public static class DataReader{
 
     public static List<Quest> questList = new List<Quest>();
+    public static Dictionary<int,PlayerBackground> backgorundDictionary = new Dictionary<int, PlayerBackground>();
 
     public static void ReadDataBase(){
         questList.Clear();
@@ -21,6 +28,18 @@ public static class DataReader{
             string description = node["description"].InnerText;
             string iconId = node["icon_id"].InnerText;
             string background = node["background"].InnerText;
+        }
+
+        XmlNodeList backgroundList = xmlDoc.GetElementsByTagName("background");
+        foreach (XmlNode node in backgroundList)
+        {
+            PlayerBackground playerBackground;
+            playerBackground.id = int.Parse(node["id"].InnerText);
+            playerBackground.description = node["description"].InnerText;
+            playerBackground.role = node["role"].InnerText;
+            if(!backgorundDictionary.ContainsKey(playerBackground.id)){
+                backgorundDictionary.Add(playerBackground.id,playerBackground);
+            }
         }
 
         XmlNodeList artifactsList = xmlDoc.GetElementsByTagName("artifacts");
