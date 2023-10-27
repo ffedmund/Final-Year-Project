@@ -13,15 +13,13 @@ namespace FYP
         TextMeshProUGUI moneyUITMPro;
         StatBoxScript statBoxScript;
 
-        private void Awake()
-        {
-            moneyUITMPro = moneyTextUI.GetComponent<TextMeshProUGUI>();
-            statBoxScript = stateBox.GetComponent<StatBoxScript>();
-        }
-
         // Update is called once per frame
         public void UpdateText()
         {
+            if(moneyUITMPro == null || statBoxScript == null){
+                moneyUITMPro = moneyTextUI.GetComponent<TextMeshProUGUI>();
+                statBoxScript = stateBox.GetComponent<StatBoxScript>();
+            }
             moneyUITMPro.SetText(UIController.playerData.GetMoneyAmount());
             statBoxScript.UpdateText();
         }

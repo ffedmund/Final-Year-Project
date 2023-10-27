@@ -26,6 +26,7 @@ public class GrassSpawner : MonoBehaviour {
 
     public void SetUpTerrainChunkpDictionary(Dictionary<Vector2, TerrainChunk> targetDictionary){
         terrainChunkDictionary = targetDictionary;
+        Debug.Log("Hello");
     }
 
     //New Update Visible Grass Function
@@ -39,7 +40,6 @@ public class GrassSpawner : MonoBehaviour {
         if(new Vector2(coordinateX,coordinateY) != previousCoordinate){
             matricesList.Clear();
             float diastem = Mathf.RoundToInt(1.0f/density*1000)/1000.0f;
-            previousCoordinate = new Vector2(coordinateX,coordinateY);
             matclone = new Material(material);
 
             // Debug.Log("[Viewer]" + viewerPosition.x +" , " + viewerPosition.y);
@@ -171,7 +171,6 @@ float BilinearInterpolation(Vector2 position, float[,] heightMap){
         int terrainCoordinateY = Mathf.RoundToInt(position.y/chunkSize);
         heightMap = terrainChunkDictionary[new Vector2(terrainCoordinateX,terrainCoordinateY)].mapData.heightMap;
         // Debug.Log("chunk coordinate: " + terrainCoordinateX+","+terrainCoordinateY);
-
         float x = Mathf.Abs((position.x+chunkSize/2)%chunkSize+((chunkSize/2+position.x)<0?95:0));
         float y = Mathf.Abs((chunkSize/2-position.y)%chunkSize+((chunkSize/2-position.y)<0?95:0));
         int x_1 = Mathf.FloorToInt(x) + 1;
@@ -179,6 +178,9 @@ float BilinearInterpolation(Vector2 position, float[,] heightMap){
         int x_0 = Mathf.FloorToInt(x);
         int y_0 = Mathf.FloorToInt(y);
         // Debug.Log("x: " + x + " y: " + y);
+        if(heightMap == null){
+            return -1;
+        }
 
         if(x_1 >= heightMap.GetLength(0) || y_1 >= heightMap.GetLength(1)){
             return heightMap[x_0,y_0];

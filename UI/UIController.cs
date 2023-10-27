@@ -30,7 +30,7 @@ namespace FYP
 
         public Transform currentInteractObject;
 
-        List<Transform> activeUIWindows = new List<Transform>();
+        public List<Transform> activeUIWindows = new List<Transform>();
 
         private void Awake()
         {
@@ -39,7 +39,7 @@ namespace FYP
 
         void Start()
         {
-            playerData = FindAnyObjectByType<PlayerStats>().playerData;
+            playerData = FindAnyObjectByType<PlayerManager>().playerData;
 
             weaponInventorySlots = weaponInventorySlotParent.GetComponentsInChildren<WeaponInventorySlot>();
 
@@ -47,30 +47,20 @@ namespace FYP
         }
 
         [System.Obsolete]
-        private void Update()
+        private async void Update()
         {
             questUI.gameObject.SetActive(playerData.quests.Count > 0);
 
             if (Input.GetKeyDown(KeyCode.U))
             {
-                stateUI.gameObject.SetActive(!stateUI.gameObject.active);
-                stateUI.GetComponent<StatusUIManager>().UpdateText();
-                DataReader.ReadQuestDataBase();
+                
                 activeUIWindows.Add(stateUI);
             }
             if(Input.GetKeyDown(KeyCode.P)){
                 playerInfoUI.gameObject.SetActive(!playerInfoUI.gameObject.active);
                 playerInfoUI.FindChild("ContentArea").GetComponent<PlayerInfoContentScript>().ShowBackgroundInfo();
-                DataReader.ReadBackgroundDataBase();
+                await DataReader.ReadBackgroundDataBase();
                 activeUIWindows.Add(playerInfoUI);
-            }
-            if (Input.GetKeyDown(KeyCode.F))
-            {
-                if (currentInteractObject != null && currentInteractObject.GetComponent<InteractableScript>().isUITrigger)
-                {
-                    currentInteractObject.GetComponent<InteractableScript>().targetTransform.gameObject.SetActive(true);
-                    activeUIWindows.Add(currentInteractObject.GetComponent<InteractableScript>().targetTransform);
-                }
             }
             if (Input.GetKeyDown(KeyCode.Escape))
             {
@@ -114,7 +104,14 @@ namespace FYP
             }
 
             #endregion
-        }
+
+            #region Player Stats
+
+            stateUI.gameObject.SetActive(!stateUI.gameObject.activeSelf);
+            stateUI.GetComponent<StatusUIManager>().UpdateText();
+
+            #endregion
+        }       
 
         public void OpenSelectWindow()
         {

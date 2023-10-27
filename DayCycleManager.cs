@@ -8,7 +8,7 @@ public class DayCycleManager : MonoBehaviour
     public float currentTime;
     [SerializeField]
     Transform lightSource;
-    Light light;
+    new Light light;
 
     // Start is called before the first frame update
     void Start()

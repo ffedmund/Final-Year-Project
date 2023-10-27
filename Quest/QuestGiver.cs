@@ -12,15 +12,26 @@ public class QuestGiver : MonoBehaviour {
     public PlayerData playerData;
     public Transform questUIPrefabs;
 
-    void Awake() {
+    Transform interactingQuestBoard;
+
+    async void Awake() {
         if(quests.Count == 0){
-            DataReader.ReadDataBase();
+            await DataReader.ReadQuestDataBase();
             quests = DataReader.questList;
+            UpdateQuestWindow();
         }
     }
 
     void OnEnable() {
         UpdateQuestWindow();
+    }
+
+    void OnDisable() {
+        if(interactingQuestBoard){
+            interactingQuestBoard.TryGetComponent(out Collider collider);
+            collider.enabled = true;
+            interactingQuestBoard = null;
+        }
     }
 
     public void UpdateQuestWindow(){
@@ -40,13 +51,20 @@ public class QuestGiver : MonoBehaviour {
     }
 
     public void AcceptQuest(Quest quest){
-        PlayerData playerData = FindAnyObjectByType<PlayerStats>().playerData;
+        PlayerData playerData = FindAnyObjectByType<PlayerManager>().playerData;
         if(playerData != null && !playerData.quests.Contains(quest)){
             quest.isActive = true;
             playerData.quests.Add(quest);
             quests.Remove(quest);
         }
         UpdateQuestWindow();
+    }
+
+    public void InteractingQuestBoard(Transform transform){
+        interactingQuestBoard = transform;
+        transform.TryGetComponent(out Collider collider);
+        Debug.Log(collider);
+        collider.enabled = false;
     }
 
 }

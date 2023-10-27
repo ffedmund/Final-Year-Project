@@ -23,6 +23,8 @@ namespace FYP
         public bool isGrounded;
         public bool canDoCombo;
 
+        public PlayerData playerData = new PlayerData();
+
         private void Awake()
         {
             cameraHandler = FindObjectOfType<CameraHandler>();

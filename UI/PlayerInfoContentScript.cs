@@ -14,7 +14,7 @@ public class PlayerInfoContentScript : MonoBehaviour
     public TextMeshProUGUI rightText;
     
     public void ShowBackgroundInfo(){
-        int playerBackgroundId = FindObjectOfType<PlayerStats>().playerData.GetAttribute("backgroundId");
+        int playerBackgroundId = FindObjectOfType<PlayerManager>().playerData.GetAttribute("backgroundId");
         PlayerBackground playerBackground = DataReader.backgorundDictionary[playerBackgroundId];
         Debug.Log(playerBackground.description);
         leftText.SetText("Background\n"+playerBackground.description);

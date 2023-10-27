@@ -17,6 +17,6 @@ public class Quest{
         this.honorReward = honorReward;
     }
     public override string ToString() {
-        return $"{title}\n  - {description}\n";
+        return $"{title}\n  - {description} {goalChecker}\n";
     }
 }

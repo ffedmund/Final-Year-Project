@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace FYP
@@ -20,6 +21,7 @@ namespace FYP
         public int currentLeftWeaponIndex = -1;
 
         public List<WeaponItem> weaponsInventory;
+        public List<Item> materialsInventory;
 
         private void Awake()
         {

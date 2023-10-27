@@ -73,8 +73,10 @@ public class MapGenerator : MonoBehaviour
 
     void Awake() {
         falloutMap = FalloffGenerator.GenerateFalloffMap(mapChunkSize,useFlatCenterMap);
-        foreach(Transform mapTransform in editorMapTransformArray){
-            mapTransform.gameObject.SetActive(false);
+        if(editorMapTransformArray != null){
+            foreach(Transform mapTransform in editorMapTransformArray){
+                mapTransform.gameObject.SetActive(false);
+            }
         }
     }
     //Call by the MapEditorGenerator Class for testing

@@ -47,6 +47,7 @@ public class EndlessTerrain : MonoBehaviour
         chunkVisibleInViewDist = Mathf.RoundToInt(maxViewDist/chunkSize);
         viewerPosition = Vector3.zero;
 
+        Debug.Log(grassSpawner);
         UpdateVisibleChunks();
         grassSpawner.SetUpTerrainChunkpDictionary(terrainChunkDictionary);
     }

@@ -5,9 +5,9 @@ using TMPro;
 
 namespace FYP
 {
-    public class WeaponPickUp : InteractableScript
+    public class MaterialPickUp : InteractableScript
     {
-        public WeaponItem weapon;
+        public MaterialItem material;
 
         public override void Interact(PlayerManager playerManager)
         {
@@ -16,7 +16,7 @@ namespace FYP
             PickUpItem(playerManager);
         }
 
-        private void PickUpItem(PlayerManager playerManager)
+        protected void PickUpItem(PlayerManager playerManager)
         {
             PlayerInventory playerInventory;
             PlayerLocomotion playerLocomotion;
@@ -27,16 +27,15 @@ namespace FYP
             animatorHandler = playerManager.GetComponentInChildren<AnimatorHandler>();
 
             playerLocomotion.rigidbody.velocity = Vector3.zero;
-            // playerLocomotion.rigidbody.angularVelocity = Vector3.zero;
 
             animatorHandler.PlayTargetAnimation("Pick Up Item", true);
 
-            playerInventory.weaponsInventory.Add(weapon);
-            playerManager.itemInteractableGameObject.GetComponentInChildren<TextMeshProUGUI>().text = weapon.itemName;
+            playerInventory.materialsInventory.Add(material);
+            playerManager.itemInteractableGameObject.GetComponentInChildren<TextMeshProUGUI>().text = material.itemName;
             playerManager.itemInteractableGameObject.SetActive(true);
 
             foreach(Quest quest in playerManager.playerData.quests){
-                quest.goalChecker.ItemCollected(weapon.itemName);
+                quest.goalChecker.ItemCollected(material.itemName);
             }
 
             Destroy(gameObject);
