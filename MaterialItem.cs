@@ -9,6 +9,7 @@ namespace FYP
     {
         public GameObject modelPrefab;
         public bool isUnarmed;
+        public int number; //contain number
 
         [Header("Idle Animations")]
         public string right_hand_idle;

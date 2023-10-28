@@ -12,7 +12,7 @@ namespace FYP
         public float radius = 0.6f;
         public string interactableText;
 
-        public Transform targetTransform;
+        public GameObject targetUIWindow;
         public bool isUITrigger;
         public UIController canvasUIController;
         public EventTrigger.TriggerEvent customCallback;
@@ -28,9 +28,9 @@ namespace FYP
                 eventData.selectedObject = this.gameObject;
                 customCallback.Invoke(eventData);
             }
-            if(isUITrigger && targetTransform.TryGetComponent(out RectTransform rectTransform)){
-                canvasUIController.activeUIWindows.Add(targetTransform);
-                targetTransform.gameObject.SetActive(true);
+            if(isUITrigger && targetUIWindow.TryGetComponent(out RectTransform rectTransform)){
+                canvasUIController.activeUIWindows.Add(targetUIWindow);
+                targetUIWindow.SetActive(true);
             }
             Debug.Log("Interacting");
         }

@@ -29,8 +29,13 @@ namespace FYP
             playerLocomotion.rigidbody.velocity = Vector3.zero;
 
             animatorHandler.PlayTargetAnimation("Pick Up Item", true);
-
+            
             playerInventory.materialsInventory.Add(material);
+            if(playerInventory.materialsNumberDictionary.ContainsKey(material.name)){
+                playerInventory.materialsNumberDictionary[material.name]++;
+            }else{
+                playerInventory.materialsNumberDictionary.Add(material.name,1);
+            }
             playerManager.itemInteractableGameObject.GetComponentInChildren<TextMeshProUGUI>().text = material.itemName;
             playerManager.itemInteractableGameObject.SetActive(true);
 

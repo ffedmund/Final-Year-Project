@@ -18,6 +18,9 @@ namespace FYP
         public bool rt_Input;
         public bool jump_Input;
         public bool inventory_Input;
+        public bool lockOnInput;
+        public bool right_Stick_Right_Input;
+        public bool right_Stick_Left_Input;
 
         public bool d_Pad_Up;
         public bool d_Pad_Down;
@@ -27,6 +30,7 @@ namespace FYP
         public bool rollFlag;
         public bool sprintFlag;
         public bool comboFlag;
+        public bool lockOnFlag;
         public bool inventoryFlag;
         public float rollInputTimer;
 
@@ -35,6 +39,7 @@ namespace FYP
         PlayerAttacker playerAttacker;
         PlayerInventory playerInventory;
         PlayerManager playerManager;
+        CameraHandler cameraHandler;
         UIController uiController;
 
         Vector2 movementInput;
@@ -47,6 +52,7 @@ namespace FYP
             playerInventory = GetComponent<PlayerInventory>();
             playerManager = GetComponent<PlayerManager>();
             uiController = FindObjectOfType<UIController>();
+            cameraHandler = FindObjectOfType<CameraHandler>();
         }
 
         public void OnEnable()
@@ -63,6 +69,9 @@ namespace FYP
                 inputActions.PlayerActions.A.performed += i => a_Input = true;
                 inputActions.PlayerActions.Jump.performed += i => jump_Input = true;
                 inputActions.PlayerActions.Inventory.performed += i => inventory_Input = true;
+                inputActions.PlayerActions.LockOn.performed += i => lockOnInput = true;
+                inputActions.PlayerMovement.LockOnTargetRight.performed += i => right_Stick_Right_Input = true;
+                inputActions.PlayerMovement.LockOnTargetLeft.performed += i => right_Stick_Left_Input = true;
             }
 
             inputActions.Enable();
@@ -75,14 +84,15 @@ namespace FYP
 
         public void TickInput(float delta)
         {
-            MoveInput(delta);
+            HandleMoveInput(delta);
             HandleRollInput(delta);
             HandleAttackInput(delta);
             HandleQuickSlotsInput();
             HandleInventoryInput();
+            HandleLockOnInput();
         }
 
-        void MoveInput(float delta)
+        void HandleMoveInput(float delta)
         {
             horizontal = movementInput.x;
             vertical = movementInput.y;
@@ -185,6 +195,48 @@ namespace FYP
                     uiController.hudWindow.SetActive(true);
                 }
             }
+        }
+
+        private void HandleLockOnInput()
+        {
+            if (lockOnInput && lockOnFlag == false)
+            {
+                lockOnInput = false;
+                cameraHandler.HandleLockOn();
+                if (cameraHandler.nearestLockOnTarget != null)
+                {
+                    cameraHandler.currentLockOnTarget = cameraHandler.nearestLockOnTarget;
+                    lockOnFlag = true;
+                }
+            }
+            else if (lockOnInput && lockOnFlag)
+            {
+                lockOnInput = false;
+                lockOnFlag = false;
+                cameraHandler.ClearLockOnTargets();
+            }
+
+            if (lockOnFlag && right_Stick_Left_Input)
+            {
+                right_Stick_Left_Input = false;
+                cameraHandler.HandleLockOn();
+                if (cameraHandler.leftLockTarget != null)
+                {
+                    cameraHandler.currentLockOnTarget = cameraHandler.leftLockTarget;
+                }
+            }
+
+            if (lockOnFlag && right_Stick_Right_Input)
+            {
+                right_Stick_Right_Input = false;
+                cameraHandler.HandleLockOn();
+                if (cameraHandler.rightLockTarget != null)
+                {
+                    cameraHandler.currentLockOnTarget = cameraHandler.rightLockTarget;
+                }
+            }
+
+            cameraHandler.SetCameraHeight();
         }
     }
 }

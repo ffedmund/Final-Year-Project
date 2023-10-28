@@ -12,11 +12,11 @@ namespace FYP
         public bool leftHandSlot01Selected;
         public bool leftHandSlot02Selected;
 
-        HandEquipmentSlotUI[] handEquipmentSlotsUI;
+        public HandEquipmentSlotUI[] handEquipmentSlotsUI;
 
         private void Start()
         {
-            handEquipmentSlotsUI = GetComponentsInChildren<HandEquipmentSlotUI>();
+            // handEquipmentSlotsUI = GetComponentsInChildren<HandEquipmentSlotUI>();
         }
 
         public void LoadWeaponOnEquipmentScreen(PlayerInventory playerInventory)
@@ -31,19 +31,19 @@ namespace FYP
             {
                 if (handEquipmentSlotsUI[i].rightHandSlot01)
                 {
-                    handEquipmentSlotsUI[i].AddItem(playerInventory.weaponsItemsInRightHandSlots[0]);
+                    handEquipmentSlotsUI[i].AddItem(playerInventory.weaponsInRightHandSlots[0]);
                 }
                 else if (handEquipmentSlotsUI[i].rightHandSlot02)
                 {
-                    handEquipmentSlotsUI[i].AddItem(playerInventory.weaponsItemsInRightHandSlots[1]);
+                    handEquipmentSlotsUI[i].AddItem(playerInventory.weaponsInRightHandSlots[1]);
                 }
                 else if (handEquipmentSlotsUI[i].leftHandSlot01)
                 {
-                    handEquipmentSlotsUI[i].AddItem(playerInventory.weaponsItemsInLeftHandSlots[0]);
+                    handEquipmentSlotsUI[i].AddItem(playerInventory.weaponsInLeftHandSlots[0]);
                 }
                 else if (handEquipmentSlotsUI[i].leftHandSlot02)
                 {
-                    handEquipmentSlotsUI[i].AddItem(playerInventory.weaponsItemsInLeftHandSlots[1]);
+                    handEquipmentSlotsUI[i].AddItem(playerInventory.weaponsInLeftHandSlots[1]);
                 }
                 
             }

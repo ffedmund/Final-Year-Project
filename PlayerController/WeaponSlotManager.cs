@@ -37,6 +37,10 @@ namespace FYP
 
         public void LoadWeaponOnSlot(WeaponItem weaponItem, bool isLeft)
         {
+            if (weaponItem == null)
+            {
+                Debug.Log("Weapon Item is null");
+            }
             if (isLeft)
             {
                 leftHandSlot.LoadWeaponModel(weaponItem);
