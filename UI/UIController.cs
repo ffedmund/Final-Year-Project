@@ -19,6 +19,7 @@ namespace FYP
         public GameObject stateUI;
         public GameObject questUI;
         public GameObject playerInfoUI;
+        public GameObject chatBoxWindow;
 
 
         [Header("Weapon Inventory")]
@@ -86,7 +87,11 @@ namespace FYP
                 string questInfo = "Quest List\n";
                 foreach (Quest quest in playerData.quests)
                 {
-                    questInfo += quest.ToString();
+                    if(quest.goalChecker.isReached()){
+                        questInfo += quest.ToString(color:"green");
+                    }else{
+                        questInfo += quest.ToString();
+                    }
                 }
                 questUI.transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText(questInfo);
             }
@@ -103,6 +108,7 @@ namespace FYP
             #region Inventory Slots
             switch(showingInventoryIndex){
                 case 1:
+                    // Debug.Log("Material Inventory: " + playerInventory.materialsInventory[0]);
                     UpdateInventorySlot(playerInventory.materialsInventory);
                     break;
                 default:
@@ -123,11 +129,12 @@ namespace FYP
                     if (inventorySlots.Length < inventory.Count)
                     {
                         Instantiate(inventorySlotPrefab, inventorySlotParent);
-                        inventorySlots = inventorySlotParent.GetComponentsInChildren<InventorySlot>();
+                        inventorySlots = inventorySlotParent.GetComponentsInChildren<InventorySlot>(true);
                     }
                     if(inventory[i] is WeaponItem){
                         inventorySlots[i].AddItem(inventory[i]);
-                    }else if(!createdSlotList.Contains(((Item)(object)inventory[i]).name)){
+                    }
+                    if(inventory[i] is MaterialItem && !createdSlotList.Contains(((Item)(object)inventory[i]).name)){
                         inventorySlots[i].AddItem(inventory[i],playerInventory.materialsNumberDictionary[((Item)(object)inventory[i]).name]);
                         createdSlotList.Add(((Item)(object)inventory[i]).name);
                     }else{

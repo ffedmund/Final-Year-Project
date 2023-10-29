@@ -75,15 +75,18 @@ public static class DataReader{
 
             XmlNodeList questDataList = xmlDoc.GetElementsByTagName("quest");
             foreach (XmlNode node in questDataList)
-            {
+            {   
+                int id = int.Parse(node["id"].InnerText);
                 string title = node["title"].InnerText;
                 string description = node["description"].InnerText;
                 int moneyReward = int.Parse(node["moneyReward"].InnerText);
                 int honorReward = int.Parse(node["honorReward"].InnerText);
+                string targetNPC = node["targetNPC"].InnerText;
+                string completeDialog = node["completeDialog"].InnerText;
                 GoalType goalType = (GoalType)int.Parse(node["goalType"].InnerText);
                 string targetID = node["targetID"].InnerText;
                 int targetAmount = int.Parse(node["targetAmount"].InnerText);
-                Quest quest = new Quest(title,description,moneyReward,honorReward);
+                Quest quest = new Quest(id,title,description,moneyReward,honorReward,targetNPC,completeDialog);
                 quest.goalChecker = new GoalChecker(goalType, targetAmount,targetID);
                 questList.Add(quest);
             }

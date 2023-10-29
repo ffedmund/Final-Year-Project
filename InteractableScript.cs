@@ -32,7 +32,6 @@ namespace FYP
                 canvasUIController.activeUIWindows.Add(targetUIWindow);
                 targetUIWindow.SetActive(true);
             }
-            Debug.Log("Interacting");
         }
     }
 }
