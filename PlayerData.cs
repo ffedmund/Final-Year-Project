@@ -25,7 +25,7 @@ public class PlayerData{
     public PlayerData(){
         _playerAttributesData = new Dictionary<string, int>();
         foreach(string key in attributeKeys){
-            _playerAttributesData[key] = key == "exp" ?0:1;
+            _playerAttributesData[key] = (key == "exp" || key == "honor" )?0:1;
         }
         _money = 0;
     }

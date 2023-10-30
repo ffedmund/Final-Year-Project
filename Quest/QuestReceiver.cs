@@ -31,7 +31,7 @@ public class QuestReceiver : MonoBehaviour {
             playerData.quests.Remove(reportQuest);
             playerData.AddPlayerData("money",reportQuest.moneyReward);
             playerData.AddPlayerData("honor",reportQuest.honorReward);
-            FindAnyObjectByType<UIController>().SetHonorText();
+            FindAnyObjectByType<UIController>().UpdateHonorUI();
             reportQuest.isFinished = true;
             if(reportQuest.goalChecker.goalType == GoalType.Delivery){
                 ReceiveItem(reportQuest);

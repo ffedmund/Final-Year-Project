@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using FYP;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.Video;
 
 namespace FYP
@@ -39,6 +40,7 @@ namespace FYP
 
         [Header("Other")]
         public TextMeshProUGUI honorLevelText;
+        public Slider honorBar;
         public GameObject currentInteractWindow;
         public List<GameObject> activeUIWindows = new List<GameObject>();
 
@@ -55,7 +57,7 @@ namespace FYP
             inventorySlots = inventorySlotParent.GetComponentsInChildren<InventorySlot>();
 
             equipmentWindowUI.LoadWeaponOnEquipmentScreen(playerInventory);
-            SetHonorText();
+            UpdateHonorUI();
         }
 
         [System.Obsolete]
@@ -150,7 +152,7 @@ namespace FYP
             }
         }
 
-        public void SetHonorText(){
+        public void UpdateHonorUI(){
             string honorLevelSting = "D";
             switch(playerData.GetHonorLevel()){
                 case 1:
@@ -169,6 +171,8 @@ namespace FYP
                     break;
             }
             honorLevelText.SetText(honorLevelSting);
+            int honorValue = playerData.GetAttribute("honor");
+            honorBar.value = honorValue/(100*Mathf.Pow(playerData.GetHonorLevel()+1,2));
         }
 
         public void ChangeShowingInventory(int index){
