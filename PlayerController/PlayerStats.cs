@@ -6,12 +6,15 @@ namespace FYP
 {
     public class PlayerStats : CharacterStats
     {
+        PlayerManager playerManager;
+
         public HealthBar healthBar;
 
         AnimatorHandler animatorHandler;
 
         private void Awake()
         {
+            playerManager = GetComponent<PlayerManager>();
             animatorHandler = GetComponentInChildren<AnimatorHandler>();
         }
 
@@ -30,6 +33,11 @@ namespace FYP
 
         public void TakeDamage(int damage)
         {
+            if (playerManager.isInvulnerable)
+            {
+                return;
+            }
+
             if (isDead)
             {
                 return;
