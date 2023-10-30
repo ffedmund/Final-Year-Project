@@ -24,9 +24,9 @@ namespace FYP
 
 
         [Header("Weapon Inventory")]
-        public GameObject weaponInventorySlotPrefab;
+        // public GameObject weaponInventorySlotPrefab;
         public Transform weaponInventorySlotParent;
-        WeaponInventorySlot[] weaponInventorySlots;
+        // WeaponInventorySlot[] weaponInventorySlots;
         
 
         [Header("Inventory")]
@@ -51,7 +51,7 @@ namespace FYP
         {
             playerData = FindAnyObjectByType<PlayerManager>().playerData;
 
-            weaponInventorySlots = weaponInventorySlotParent.GetComponentsInChildren<WeaponInventorySlot>();
+            // weaponInventorySlots = weaponInventorySlotParent.GetComponentsInChildren<WeaponInventorySlot>();
             inventorySlots = inventorySlotParent.GetComponentsInChildren<InventorySlot>();
 
             equipmentWindowUI.LoadWeaponOnEquipmentScreen(playerInventory);
@@ -72,9 +72,9 @@ namespace FYP
                 }
             }
             if(Input.GetKeyDown(KeyCode.P)){
+                await DataReader.ReadBackgroundDataBase();
                 playerInfoUI.gameObject.SetActive(!playerInfoUI.gameObject.active);
                 playerInfoUI.transform.FindChild("ContentArea").GetComponent<PlayerInfoContentScript>().ShowBackgroundInfo();
-                await DataReader.ReadBackgroundDataBase();
                 activeUIWindows.Add(playerInfoUI);
             }
             if (Input.GetKeyDown(KeyCode.Escape))
@@ -136,8 +136,7 @@ namespace FYP
                     }
                     if(inventory[i] is WeaponItem){
                         inventorySlots[i].AddItem(inventory[i]);
-                    }
-                    if(inventory[i] is MaterialItem && !createdSlotList.Contains(((Item)(object)inventory[i]).name)){
+                    }else if(inventory[i] is MaterialItem && !createdSlotList.Contains(((Item)(object)inventory[i]).name)){
                         inventorySlots[i].AddItem(inventory[i],playerInventory.materialsNumberDictionary[((Item)(object)inventory[i]).name]);
                         createdSlotList.Add(((Item)(object)inventory[i]).name);
                     }else{

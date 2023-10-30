@@ -4,12 +4,8 @@ using UnityEngine;
 
 namespace FYP
 {
-    public class PlayerStats : MonoBehaviour
+    public class PlayerStats : CharacterStats
     {
-        public int healthLevel = 10;
-        public int maxHealth;
-        public int currentHealth;
-
         public HealthBar healthBar;
 
         AnimatorHandler animatorHandler;
@@ -34,6 +30,11 @@ namespace FYP
 
         public void TakeDamage(int damage)
         {
+            if (isDead)
+            {
+                return;
+            }
+
             currentHealth = currentHealth - damage;
             healthBar.SetCurrentHealth(currentHealth);
 
@@ -43,6 +44,7 @@ namespace FYP
             {
                 currentHealth = 0;
                 animatorHandler.PlayTargetAnimation("Death_01", true);
+                isDead = true;
             }
         }
     }

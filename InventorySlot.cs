@@ -41,6 +41,7 @@ namespace FYP
             item = newItem;
             icon.sprite = item.itemIcon;
             icon.enabled = true;
+            text.enabled = false;
             gameObject.SetActive(true);
         }
 

@@ -10,6 +10,7 @@ namespace FYP
         Animator anim;
         CameraHandler cameraHandler;
         PlayerLocomotion playerLocomotion;
+        public PlayerData playerData = new PlayerData();
 
         InteractableUI interactableUI;
         public GameObject interactableUIGameObject;
@@ -22,8 +23,8 @@ namespace FYP
         public bool isInAir;
         public bool isGrounded;
         public bool canDoCombo;
-
-        public PlayerData playerData = new PlayerData();
+        public bool isUsingRightHand;
+        public bool isUsingLeftHand;
 
         private void Awake()
         {
@@ -43,8 +44,10 @@ namespace FYP
             float delta = Time.deltaTime;
             isInteracting = anim.GetBool("isInteracting");
             canDoCombo = anim.GetBool("canDoCombo");
+            isUsingRightHand = anim.GetBool("isUsingRightHand");
+            isUsingLeftHand = anim.GetBool("isUsingLeftHand");
             anim.SetBool("isInAir", isInAir);
-
+            
             inputHandler.TickInput(delta);
             playerLocomotion.HandleRollingAndSprinting(delta);
             playerLocomotion.HandleJumping();

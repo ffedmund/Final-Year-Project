@@ -8,14 +8,17 @@ namespace FYP
     public class StatBoxScript : MonoBehaviour
     {
         [SerializeField]
-        Transform[] stateBoxes;
+        TextMeshProUGUI[] stateBoxes;
+        [SerializeField]
+        TextMeshProUGUI levelText;
 
         public void UpdateText()
-        {
+        {   
+            levelText.SetText($"Level   {UIController.playerData.GetAttribute("level").ToString()}");
             string[] playerAttributesArray = UIController.playerData.ToStringArray();
             for (int i = 0; i < playerAttributesArray.Length; i++)
             {
-                stateBoxes[i].GetComponent<TextMeshProUGUI>().SetText(playerAttributesArray[i]);
+                stateBoxes[i].SetText(playerAttributesArray[i]);
             }
         }
 

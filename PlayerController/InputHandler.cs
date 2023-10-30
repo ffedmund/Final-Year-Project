@@ -40,6 +40,7 @@ namespace FYP
         PlayerInventory playerInventory;
         PlayerManager playerManager;
         CameraHandler cameraHandler;
+        AnimatorHandler animatorHandler;
         UIController uiController;
 
         Vector2 movementInput;
@@ -53,6 +54,7 @@ namespace FYP
             playerManager = GetComponent<PlayerManager>();
             uiController = FindObjectOfType<UIController>();
             cameraHandler = FindObjectOfType<CameraHandler>();
+            animatorHandler = GetComponentInChildren<AnimatorHandler>();
         }
 
         public void OnEnable()
@@ -143,6 +145,7 @@ namespace FYP
                     if (playerManager.canDoCombo)
                         return;
 
+                    animatorHandler.anim.SetBool("isUsingRightHand", true);
                     playerAttacker.HandleLightAttack(playerInventory.rightWeapon);
                 }
 

@@ -14,7 +14,7 @@ public enum HonorRank{
 
 [System.Serializable]
 public class PlayerData{
-    readonly string[] attributeKeys = {"backgroundId","level","honor","vitality","strength","intelligence","dexterity","endurance","luck"};
+    readonly string[] attributeKeys = {"backgroundId","level","exp","honor","vitality","strength","intelligence","dexterity","endurance","luck"};
     readonly string[] moneySign = {"","K","M","B"};
 
     public List<Quest> quests = new List<Quest>();
@@ -25,7 +25,7 @@ public class PlayerData{
     public PlayerData(){
         _playerAttributesData = new Dictionary<string, int>();
         foreach(string key in attributeKeys){
-            _playerAttributesData[key] = 1;
+            _playerAttributesData[key] = key == "exp" ?0:1;
         }
         _money = 0;
     }
@@ -33,6 +33,9 @@ public class PlayerData{
     public void AddPlayerData(string key, int value) {
         if(_playerAttributesData.ContainsKey(key)){
             _playerAttributesData[key] += value;
+            if(key == "exp" && _playerAttributesData[key]>100*Mathf.Pow(_playerAttributesData["level"],2)){
+                _playerAttributesData["level"]++;
+            }
         }
         if(key == "money"){
             _money += value;
@@ -76,12 +79,15 @@ public class PlayerData{
     }
 
     public string[] ToStringArray(bool fullAttributes = false){
-        int outputLength = _playerAttributesData.Count - (fullAttributes?0:3);
+
+        int startingPivot = fullAttributes? 0:Array.IndexOf(attributeKeys,"vitality");
+        int outputLength = _playerAttributesData.Count - startingPivot;
         string[] output = new string[outputLength];
-        int count = 0;
-        for(int i = fullAttributes?0:3; i < _playerAttributesData.Count; i++){
+
+        for(int i = startingPivot, count = 0; i < _playerAttributesData.Count; i++){
             output[count++] = string.Format("{0}: {1}",attributeKeys[i],_playerAttributesData[attributeKeys[i]]);
         }
+
         return output;
     }
 
