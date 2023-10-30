@@ -11,10 +11,11 @@ public class NPCController : MonoBehaviour
     public float turnSpeed = 5.0f; // Set this to adjust how quickly the NPC turns its head
     public float maxDistance = 5.0f; // Set this to adjust how close the player needs to be for the NPC to turn its head
     public Animator animator;
-
+    
     private Transform playerTransform;
     private Quaternion initialRotation;
     private NPCInteraction npcInteraction;
+    private NPCInventory npcInventory;
 
     void Start()
     {
@@ -38,6 +39,9 @@ public class NPCController : MonoBehaviour
 
         if(TryGetComponent(out npcInteraction)){
             npcInteraction.Setup(npc);
+        }
+        if(TryGetComponent(out npcInventory)){
+            npcInventory.Setup(npc);
         }
     }
 

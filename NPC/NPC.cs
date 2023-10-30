@@ -11,6 +11,8 @@ namespace FYP
         public string id;
         public string npcName;
         public string[] dialogues;
+        public List<Item> npcInventory;
+        public bool isTradable;
     }
 }
 

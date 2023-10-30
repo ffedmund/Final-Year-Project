@@ -44,6 +44,10 @@ namespace FYP
             gameObject.SetActive(true);
         }
 
+        public Item GetItem(){
+            return item;
+        }
+
         public void ClearInventorySlot()
         {
             item = null;

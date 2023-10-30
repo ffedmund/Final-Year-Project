@@ -3,6 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[Serializable]
+public enum HonorRank{
+    D = 0,
+    C = 1,
+    B = 2,
+    A = 3,
+    S = 4
+}
+
 [System.Serializable]
 public class PlayerData{
     readonly string[] attributeKeys = {"backgroundId","level","honor","vitality","strength","intelligence","dexterity","endurance","luck"};
@@ -52,7 +61,14 @@ public class PlayerData{
     }
 
     public int GetAttribute(string key){
+        if(key == "money")return _money;
         return _playerAttributesData[key];
+    }
+
+    public int GetHonorLevel(){
+        int honorLevel = Mathf.FloorToInt(Mathf.Sqrt(_playerAttributesData["honor"]/100));
+
+        return honorLevel;
     }
 
     public Dictionary<string,int> GetAttributes(){

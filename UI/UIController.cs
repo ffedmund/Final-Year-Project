@@ -20,6 +20,7 @@ namespace FYP
         public GameObject questUI;
         public GameObject playerInfoUI;
         public GameObject chatBoxWindow;
+        public GameObject tradeWindow;
 
 
         [Header("Weapon Inventory")]
@@ -37,6 +38,7 @@ namespace FYP
         int showingInventoryIndex;
 
         [Header("Other")]
+        public TextMeshProUGUI honorLevelText;
         public GameObject currentInteractWindow;
         public List<GameObject> activeUIWindows = new List<GameObject>();
 
@@ -53,6 +55,7 @@ namespace FYP
             inventorySlots = inventorySlotParent.GetComponentsInChildren<InventorySlot>();
 
             equipmentWindowUI.LoadWeaponOnEquipmentScreen(playerInventory);
+            SetHonorText();
         }
 
         [System.Obsolete]
@@ -146,6 +149,27 @@ namespace FYP
                     inventorySlots[i].ClearInventorySlot();
                 }
             }
+        }
+
+        public void SetHonorText(){
+            string honorLevelSting = "D";
+            switch(playerData.GetHonorLevel()){
+                case 1:
+                    honorLevelSting = "C";
+                    break;
+                case 2:
+                    honorLevelSting = "B";
+                    break;
+                case 3:
+                    honorLevelSting = "A";
+                    break;
+                case 4:
+                    honorLevelSting = "S";
+                    break;
+                default:
+                    break;
+            }
+            honorLevelText.SetText(honorLevelSting);
         }
 
         public void ChangeShowingInventory(int index){

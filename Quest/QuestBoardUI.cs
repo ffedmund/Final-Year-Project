@@ -45,7 +45,7 @@ public class QuestBoardUI : MonoBehaviour {
         for(int i = 0; i < quests.Count; i++){
             Transform questUI = transform.GetChild(i);
             Transform acceptButtonTransform = questUI.Find("AcceptButton");
-            Transform claimButtonTransform = questUI.Find("ClaimButton");
+            Transform reportButtonTransform = questUI.Find("ReportButton");
             Quest quest = quests[i];
             if(!quest.isFinished &&  questGiver.questIdList.Contains(quest.id)){
                 acceptButtonTransform.GetComponent<Button>().onClick.RemoveAllListeners();
@@ -54,15 +54,15 @@ public class QuestBoardUI : MonoBehaviour {
 
                 if(quest.goalChecker.isReached() && questReceiver.questIdList.Contains(quest.id)){
                     acceptButtonTransform.gameObject.SetActive(false);
-                    claimButtonTransform.gameObject.SetActive(true);
-                    claimButtonTransform.GetComponent<Button>().onClick.AddListener(() => questReceiver.ReportQuest(quest));
-                    claimButtonTransform.GetComponent<Button>().onClick.AddListener(() => UpdateQuestWindow());
+                    reportButtonTransform.gameObject.SetActive(true);
+                    reportButtonTransform.GetComponent<Button>().onClick.AddListener(() => questReceiver.ReportQuest(quest));
+                    reportButtonTransform.GetComponent<Button>().onClick.AddListener(() => UpdateQuestWindow());
                 }else{
                     acceptButtonTransform.GetComponent<Button>().onClick.AddListener(() => questGiver.AcceptQuest(quest));
                     acceptButtonTransform.GetComponent<Button>().onClick.AddListener(() => UpdateQuestWindow());
                     acceptButtonTransform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText(quest.isActive?"ACCEPTED":"ACCEPT");
                     acceptButtonTransform.gameObject.SetActive(true);
-                    claimButtonTransform.gameObject.SetActive(false);
+                    reportButtonTransform.gameObject.SetActive(false);
                 }
 
                 questUI.gameObject.SetActive(true);

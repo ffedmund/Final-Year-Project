@@ -31,6 +31,7 @@ public class QuestReceiver : MonoBehaviour {
             playerData.quests.Remove(reportQuest);
             playerData.AddPlayerData("money",reportQuest.moneyReward);
             playerData.AddPlayerData("honor",reportQuest.honorReward);
+            FindAnyObjectByType<UIController>().SetHonorText();
             reportQuest.isFinished = true;
             if(reportQuest.goalChecker.goalType == GoalType.Delivery){
                 ReceiveItem(reportQuest);
@@ -43,10 +44,16 @@ public class QuestReceiver : MonoBehaviour {
         PlayerManager playerManager;
         playerManager = FindAnyObjectByType<PlayerManager>();
         playerInventory = playerManager.GetComponent<PlayerInventory>();
+        TryGetComponent(out NPCInventory npcInventory);
 
         for(int i = 0; i < quest.goalChecker.targetAmount; i++){
             MaterialItem materialItem = playerInventory.materialsInventory.Find(item => item.name == quest.goalChecker.targetId);
             playerInventory.materialsInventory.Remove(materialItem);
+            
+            //If Receiver is NPC add it into NPC's inventory
+            if(npcInventory){
+                npcInventory.npcInventory.Add((Item)(object)materialItem);
+            }
         }
         playerInventory.materialsNumberDictionary[quest.goalChecker.targetId]-=quest.goalChecker.targetAmount;
     }

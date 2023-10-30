@@ -44,10 +44,34 @@ public static class DataReader{
     public static Dictionary<int,PlayerAbility> skillDictionary = new Dictionary<int, PlayerAbility>();
     public static Dictionary<int,PlayerAbility> talentDictionary = new Dictionary<int, PlayerAbility>();
     public static Dictionary<int,PlayerTarget> roleTargetDictionary = new Dictionary<int, PlayerTarget>();
+    public static Dictionary<string,int> basicPriceDictionary = new Dictionary<string, int>();
     public static List<PlayerTarget> targetList = new List<PlayerTarget>();
+
+    static bool questDataLoaded;
+    static bool backgroundDataLoaded;
+    static bool targetDataLoaded;
+    static bool abilityDataLoaded;
+    static bool priceDataLoaded;
+
+    public static async Task ReadPriceDataBase(){
+        if(priceDataLoaded)return;
+        await Task.Run(() => {
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.Load("./Assets/GameData/PriceData.xml");
+
+            XmlNodeList priceList = xmlDoc.GetElementsByTagName("price");
+            foreach(XmlNode node in priceList){
+                string itemId = node["id"].InnerText;
+                int price = int.Parse(node["basicPrice"].InnerText);
+                basicPriceDictionary.Add(itemId,price);
+            }
+        });
+        priceDataLoaded = true;
+    }
 
 
     public static async Task ReadBackgroundDataBase(){
+        if(backgroundDataLoaded)return;
         await Task.Run(() => {
             XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.Load("./Assets/GameData/BackgroundData.xml");
@@ -64,9 +88,11 @@ public static class DataReader{
                 }
             }
         });
+        backgroundDataLoaded = true;
     }
 
     public static async Task ReadQuestDataBase(){
+        if(questDataLoaded)return;
         await Task.Run(() => {
             questList.Clear();
 
@@ -91,9 +117,11 @@ public static class DataReader{
                 questList.Add(quest);
             }
         });
+        questDataLoaded = true;
     }
 
     public static async Task ReadTargetDataBase(){
+        if(targetDataLoaded)return;
         await Task.Run(() => {
             questList.Clear();
 
@@ -116,9 +144,11 @@ public static class DataReader{
                 }
             }
         });
+        targetDataLoaded = true;
     }
 
      public static async Task ReadAbilityDataBase(){
+        if(abilityDataLoaded)return;
         await Task.Run(() => {
             questList.Clear();
 
@@ -149,6 +179,7 @@ public static class DataReader{
                 }
             }
         });
+        abilityDataLoaded = true;
     }
 
     public static async Task ReadDataBase(){
