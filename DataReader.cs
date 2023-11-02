@@ -39,7 +39,9 @@ public struct PlayerAbility{
 
 public static class DataReader{
 
-    public static List<Quest> questList = new List<Quest>();
+    public static List<Quest> regularQuestList = new List<Quest>();
+    public static Dictionary<HonorRank,List<Quest>> rankQuestList = new Dictionary<HonorRank, List<Quest>>();
+    public static List<Quest> specialQuestList = new List<Quest>();
     public static Dictionary<int,PlayerBackground> backgorundDictionary = new Dictionary<int, PlayerBackground>();
     public static Dictionary<int,PlayerAbility> skillDictionary = new Dictionary<int, PlayerAbility>();
     public static Dictionary<int,PlayerAbility> talentDictionary = new Dictionary<int, PlayerAbility>();
@@ -94,7 +96,9 @@ public static class DataReader{
     public static async Task ReadQuestDataBase(){
         if(questDataLoaded)return;
         await Task.Run(() => {
-            questList.Clear();
+            rankQuestList.Clear();
+            regularQuestList.Clear();
+            specialQuestList.Clear();
 
             XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.Load("./Assets/GameData/QuestData.xml");
@@ -103,18 +107,35 @@ public static class DataReader{
             foreach (XmlNode node in questDataList)
             {   
                 int id = int.Parse(node["id"].InnerText);
+                QuestType questType = (QuestType)int.Parse(node["questType"].InnerText);
+                HonorRank honorRank = questType == QuestType.Rank? (HonorRank)int.Parse(node["requiredRank"].InnerText):HonorRank.D;
                 string title = node["title"].InnerText;
                 string description = node["description"].InnerText;
                 int moneyReward = int.Parse(node["moneyReward"].InnerText);
                 int honorReward = int.Parse(node["honorReward"].InnerText);
+                string itemReward = node["itemReward"].InnerText;
+                int itemRewardAmount = itemReward != ""?int.Parse(node["itemRewardAmount"].InnerText):0;
                 string targetNPC = node["targetNPC"].InnerText;
                 string completeDialog = node["completeDialog"].InnerText;
+                Quest quest = new Quest(id,questType,honorRank,title,description,moneyReward,honorReward,itemReward,itemRewardAmount,targetNPC,completeDialog);
                 GoalType goalType = (GoalType)int.Parse(node["goalType"].InnerText);
                 string targetID = node["targetID"].InnerText;
                 int targetAmount = int.Parse(node["targetAmount"].InnerText);
-                Quest quest = new Quest(id,title,description,moneyReward,honorReward,targetNPC,completeDialog);
                 quest.goalChecker = new GoalChecker(goalType, targetAmount,targetID);
-                questList.Add(quest);
+                switch(questType){
+                    case QuestType.Special:
+                        specialQuestList.Add(quest);
+                        break;
+                    case QuestType.Rank:
+                        if(!rankQuestList.ContainsKey(honorRank)){
+                            rankQuestList.Add(honorRank,new List<Quest>());
+                        }
+                        rankQuestList[honorRank].Add(quest);
+                        break;
+                    default:
+                        regularQuestList.Add(quest);
+                        break;
+                }
             }
         });
         questDataLoaded = true;
@@ -123,7 +144,6 @@ public static class DataReader{
     public static async Task ReadTargetDataBase(){
         if(targetDataLoaded)return;
         await Task.Run(() => {
-            questList.Clear();
 
             XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.Load("./Assets/GameData/TargetData.xml");
@@ -150,7 +170,6 @@ public static class DataReader{
      public static async Task ReadAbilityDataBase(){
         if(abilityDataLoaded)return;
         await Task.Run(() => {
-            questList.Clear();
 
             XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.Load("./Assets/GameData/AbilityData.xml");
@@ -180,24 +199,5 @@ public static class DataReader{
             }
         });
         abilityDataLoaded = true;
-    }
-
-    public static async Task ReadDataBase(){
-        await Task.Run(() => {
-            questList.Clear();
-
-            XmlDocument xmlDoc = new XmlDocument();
-            xmlDoc.Load("./Assets/GameData/Data.xml");
-
-            XmlNodeList artifactsList = xmlDoc.GetElementsByTagName("artifacts");
-            foreach (XmlNode node in artifactsList)
-            {
-                string name = node["name"].InnerText;
-                string id = node["id"].InnerText;
-                string iconId = node["icon_id"].InnerText;
-                string prefabId = node["prefab_id"].InnerText;
-                string description = node["description"].InnerText;
-            }
-        });
     }
 }

@@ -11,7 +11,6 @@ public class WaterGenerator: MonoBehaviour{
     public float density;
     [SerializeField]
     float waterShowingDistance;
-    public LayerMask layerMask;
     public Transform waterPlane;
 
     float chunkSize;

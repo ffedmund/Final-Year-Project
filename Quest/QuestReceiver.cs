@@ -5,14 +5,20 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class QuestReceiver : MonoBehaviour {
-    
-    [Header("Receive Quest List")]
-    public List<int> questIdList;
+    QuestList questList;
+
+    void Start(){
+        questList = GetComponent<QuestList>();
+        if(!questList){
+            enabled = false;
+        }
+    }
+
 
     public void ReportQuests(List<Quest> quests){
         foreach (Quest quest in quests)
         {
-            if(questIdList.Contains(quest.id) && quest.goalChecker.isReached()){
+            if(questList.CanReportQuest(quest) && quest.goalChecker.isReached()){
                 quests.Remove(quest);
                 PlayerData playerData = FindAnyObjectByType<PlayerManager>().playerData;
                 playerData.AddPlayerData("money",quest.moneyReward);
@@ -26,7 +32,7 @@ public class QuestReceiver : MonoBehaviour {
     }
 
     public void ReportQuest(Quest reportQuest){
-        if(questIdList.Contains(reportQuest.id) && reportQuest.goalChecker.isReached()){
+        if(questList.CanReportQuest(reportQuest) && reportQuest.goalChecker.isReached()){
             PlayerData playerData = FindAnyObjectByType<PlayerManager>().playerData;
             playerData.quests.Remove(reportQuest);
             playerData.AddPlayerData("money",reportQuest.moneyReward);

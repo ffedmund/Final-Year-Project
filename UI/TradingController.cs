@@ -69,12 +69,15 @@ public class TradingController:MonoBehaviour{
             }
         }
 
-        while(sellerInventorySlots.Length != seller.inventory.npcInventory.Count)
+        int count = 0;
+        while(sellerInventorySlots.Length != seller.inventory.npcInventory.Count && count++<100)
         {
             if(sellerInventorySlots.Length < seller.inventory.npcInventory.Count)
             {
+                // Debug.Log($"Need More slot");
                 if(inactiveInventorySlots.Count > 0)
                 {
+                    // Debug.Log($"Calling inactive Slot");
                     inactiveInventorySlots[inactiveInventorySlots.Count-1].SetActive(true);
                     inactiveInventorySlots.Remove(inactiveInventorySlots[inactiveInventorySlots.Count-1]);
                 }
@@ -89,6 +92,8 @@ public class TradingController:MonoBehaviour{
             }
 
             sellerInventorySlots = sellerInventorySlotParent.GetComponentsInChildren<InventorySlot>();
+            // Debug.Log(count);
+            // Debug.Log($"{sellerInventorySlots.Length} != {seller.inventory.npcInventory.Count}");
         }
 
         for(int i = 0; i < seller.inventory.npcInventory.Count; i++){

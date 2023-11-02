@@ -12,11 +12,11 @@ namespace FYP
         public bool leftHandSlot01Selected;
         public bool leftHandSlot02Selected;
 
-        public HandEquipmentSlotUI[] handEquipmentSlotsUI;
+        HandEquipmentSlotUI[] handEquipmentSlotsUI;
 
         private void Start()
         {
-            // handEquipmentSlotsUI = GetComponentsInChildren<HandEquipmentSlotUI>();
+            handEquipmentSlotsUI = GetComponentsInChildren<HandEquipmentSlotUI>();
         }
 
         public void LoadWeaponOnEquipmentScreen(PlayerInventory playerInventory)

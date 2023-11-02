@@ -34,7 +34,7 @@ public class NPCInteraction : InteractableScript
         base.Interact(playerManager);
         if(questReceiver)
         {
-            Quest quest = playerManager.playerData.quests.Find(quest => quest.goalChecker.isReached()&&questReceiver.questIdList.Contains(quest.id));
+            Quest quest = playerManager.playerData.quests.Find(quest => quest.goalChecker.isReached()&&questReceiver.GetComponent<QuestList>().CanReportQuest(quest));
             if(quest != null)
             {
                 questReceiver.ReportQuest(quest);

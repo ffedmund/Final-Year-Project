@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using FYP;
 using TMPro;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,12 +12,14 @@ public class QuestBoardUI : MonoBehaviour {
     public Transform questUIPrefabs;
 
     Transform interactingQuestBoard;
-    List<Quest> quests = new List<Quest>();
+    List<Quest> currentQuestList = new List<Quest>();
+    QuestList questList;
     QuestGiver questGiver;
     QuestReceiver questReceiver;
 
-    public void Setup(List<Quest> quests){
-        this.quests = quests;
+    public void Setup(QuestList questList){
+        this.questList = questList;
+        this.currentQuestList = questList.currentQuestList;
         if(!TryGetComponent(out questGiver) || !TryGetComponent(out questReceiver)){
             this.enabled = false;
         }
@@ -31,9 +34,14 @@ public class QuestBoardUI : MonoBehaviour {
     }
 
     public void UpdateQuestWindow(){
+        if(questList)questList.GetQuests();
+        PlayerData playerData = FindAnyObjectByType<PlayerManager>().playerData;
+        List<Quest> suitableQuestList = new List<Quest>();
+        suitableQuestList.AddRange(currentQuestList.FindAll(quest => quest.questType == QuestType.Regular));
+        suitableQuestList.AddRange(currentQuestList.FindAll(quest => quest.questType == QuestType.Rank && ((int)quest.honorRank == playerData.GetHonorLevel() || (int)quest.honorRank == playerData.GetHonorLevel()+1)));
         int questPostUINumber = transform.childCount;
-        while(questPostUINumber!=quests.Count){
-            if(questPostUINumber<quests.Count){
+        while(questPostUINumber!=suitableQuestList.Count){
+            if(questPostUINumber<suitableQuestList.Count){
                 Instantiate(questUIPrefabs,transform);
                 questPostUINumber++;
             }else{
@@ -42,17 +50,18 @@ public class QuestBoardUI : MonoBehaviour {
             }
         }
 
-        for(int i = 0; i < quests.Count; i++){
+        for(int i = 0; i < suitableQuestList.Count; i++){
             Transform questUI = transform.GetChild(i);
             Transform acceptButtonTransform = questUI.Find("AcceptButton");
             Transform reportButtonTransform = questUI.Find("ReportButton");
-            Quest quest = quests[i];
-            if(!quest.isFinished &&  questGiver.questIdList.Contains(quest.id)){
+            Quest quest = suitableQuestList[i];
+            if(!quest.isFinished){
                 acceptButtonTransform.GetComponent<Button>().onClick.RemoveAllListeners();
                 questUI.Find("Title").GetComponent<TextMeshProUGUI>().SetText(quest.title);
-                questUI.Find("Description").GetComponent<TextMeshProUGUI>().SetText(quest.description);
+                questUI.Find("RankText").GetComponent<TextMeshProUGUI>().SetText("RANK " +quest.honorRank.ToString());
+                questUI.Find("ScrollArea").Find("Content").Find("Description").GetComponent<TextMeshProUGUI>().SetText(quest.description);
 
-                if(quest.goalChecker.isReached() && questReceiver.questIdList.Contains(quest.id)){
+                if(quest.goalChecker.isReached() && questList.CanReportQuest(quest)){
                     acceptButtonTransform.gameObject.SetActive(false);
                     reportButtonTransform.gameObject.SetActive(true);
                     reportButtonTransform.GetComponent<Button>().onClick.AddListener(() => questReceiver.ReportQuest(quest));

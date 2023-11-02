@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class TerrainChunk
@@ -86,10 +87,12 @@ public class TerrainChunk
                     }else if(!lodMesh.hasRequestedMesh){
                         lodMesh.RequestMeshData(mapData);
                     }
+                    meshObject.layer = lodIndex == 0?7:0;
                 }
                 if(lodIndex == 0){
                     if(collisionLODMesh.hasMesh){
                         meshCollider.sharedMesh = collisionLODMesh.mesh;
+                        NavigationBaker.Bake();
                         if(!hasGeneratedTrees){
                             EndlessTerrain.treeGenerator.CreateTrees(meshObject.transform,mapData.treeMap,position);
                             EndlessTerrain.waterGenerator.CreateWater(mapData.waterMap,chunkCoordinate);

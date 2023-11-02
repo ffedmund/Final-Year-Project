@@ -27,6 +27,7 @@ namespace FYP
                 BaseEventData eventData = new BaseEventData(EventSystem.current);
                 eventData.selectedObject = this.gameObject;
                 customCallback.Invoke(eventData);
+                // customCallback.Invoke(playerManager);
             }
             if(isUITrigger && targetUIWindow.TryGetComponent(out RectTransform rectTransform)){
                 canvasUIController.activeUIWindows.Add(targetUIWindow);

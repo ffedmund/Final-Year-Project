@@ -5,24 +5,15 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class QuestGiver : MonoBehaviour {
-    
-    [SerializeField]
-    List<Quest> quests = new List<Quest>();
-    [Header("Host Quest List")]
-    public List<int> questIdList;
 
+    public QuestList _questList;
     QuestBoardUI questBoardUI;
 
     async void Awake() {
-        await DataReader.ReadQuestDataBase();
-        foreach(Quest quest in DataReader.questList){
-            if(questIdList.Contains(quest.id)){
-                quests.Add(quest);
-            }    
-        }
+        await _questList.LoadQuestList();
         if(TryGetComponent(out questBoardUI))
-        {
-            questBoardUI.Setup(quests);
+        {   
+            questBoardUI.Setup(_questList);
             questBoardUI.UpdateQuestWindow();
         }
     }
