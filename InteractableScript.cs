@@ -4,6 +4,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.Events;
 using UnityEngine;
 using System;
+using DG.Tweening;
 
 namespace FYP
 {
@@ -20,6 +21,12 @@ namespace FYP
         private void OnDrawGizmosSelected() {
             Gizmos.color = Color.blue;
             Gizmos.DrawWireSphere(transform.position, radius);
+        }
+
+        private void OnDestroy() {
+            if(DOTween.IsTweening(transform.gameObject)){
+                DOTween.Kill(transform.gameObject);
+            }
         }
 
         public virtual void Interact(PlayerManager playerManager) {

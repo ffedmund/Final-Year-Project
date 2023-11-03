@@ -68,6 +68,8 @@ public class QuestList : MonoBehaviour {
         if(specialQuestIds.Length > 0){
             currentQuestList = questDictionary[(int)QuestType.Special*10];
         }else if(Time.time - previousTime > questRefreshFrequency){
+            Debug.Log("Quest Refresh");
+            List<Quest> questsToRemove = new List<Quest>();
             foreach(Quest quest in currentQuestList){
                 if(quest.isFinished){
                     if(quest.questType == QuestType.Regular){
@@ -77,11 +79,17 @@ public class QuestList : MonoBehaviour {
                             quest.goalChecker.currentAmount = 0;
                         }
                     }
-                    currentQuestList.Remove(quest);
-                    int questDictKey = (int)quest.questType*10+(int)quest.honorRank;
-                    Quest newRankQuest = questDictionary[questDictKey][Random.Range(0,questDictionary[questDictKey].Count)];
-                    currentQuestList.Add(newRankQuest);
+                    questsToRemove.Add(quest);
                 }
+            }
+            foreach(Quest quest in questsToRemove){
+                currentQuestList.Remove(quest);
+                int questDictKey = (int)quest.questType*10+(int)quest.honorRank;
+                Quest newQuest = null;
+                do{
+                    newQuest = questDictionary[questDictKey][Random.Range(0,questDictionary[questDictKey].Count)];
+                }while(currentQuestList.Contains(newQuest));
+                currentQuestList.Add(newQuest);
             }
             previousTime = Time.time;
         }
