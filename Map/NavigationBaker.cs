@@ -9,6 +9,6 @@ public class NavigationBaker : MonoBehaviour{
     }
 
     public static void Bake(){
-        navMeshSurface.BuildNavMesh();
+        if(navMeshSurface)navMeshSurface.BuildNavMesh();
     }
 }

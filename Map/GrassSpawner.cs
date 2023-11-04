@@ -4,6 +4,9 @@ using UnityEngine;
 using UnityEngine.Rendering;
 
 public class GrassSpawner : MonoBehaviour {
+
+    public bool isActive;
+
     public Mesh mesh;
     public Material material;
     [Range(0.1f,100)]
@@ -35,6 +38,7 @@ public class GrassSpawner : MonoBehaviour {
     //Using height map coordinate for position y
     //Todo: Sometime the height is wrong.
     public void UpdateVisibleGrass(float[,] heightMap, Vector2 viewerPosition){
+        if(!isActive)return;
         int coordinateX = Mathf.RoundToInt(viewerPosition.x);
         int coordinateY = Mathf.RoundToInt(viewerPosition.y);
         if(new Vector2(coordinateX,coordinateY) != previousCoordinate){

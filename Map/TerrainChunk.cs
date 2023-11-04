@@ -34,6 +34,7 @@ public class TerrainChunk
         Vector3 positionV3 = new Vector3(position.x,0,position.y);
 
         meshObject = new GameObject(String.Format("Terrain Chunk [{0},{1}]",coordinate.x,coordinate.y));
+        meshObject.isStatic = true;
         meshRenderer = meshObject.AddComponent<MeshRenderer>();
         meshFilter = meshObject.AddComponent<MeshFilter>();
         meshCollider = meshObject.AddComponent<MeshCollider>();

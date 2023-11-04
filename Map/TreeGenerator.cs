@@ -41,6 +41,7 @@ public class TreeGenerator: MonoBehaviour
                             }
                             // Debug.Log(treePositionX + " " + treePositionZ);
                             GameObject tree = Instantiate(rndTreePrefab,treePosition, randomRotation);
+                            tree.isStatic = true;
                             tree.transform.parent = parentChunk;
                             tree.transform.localScale *= scale/10;
                         }

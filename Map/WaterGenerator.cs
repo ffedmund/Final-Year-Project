@@ -7,6 +7,7 @@ using UnityEngine.UIElements;
 
 public class WaterGenerator: MonoBehaviour{
 
+    public bool isActive;
     [Range(1,100)]
     public float density;
     [SerializeField]
@@ -63,6 +64,7 @@ public class WaterGenerator: MonoBehaviour{
     }
 
     public void CreateWater(int[,] waterMap,Vector2 chunkCoordinate){
+        if(!isActive)return;
         int size = waterMap.GetLength(0);
         int chunkSize = MapGenerator.mapChunkSize - 1;
 
@@ -73,6 +75,7 @@ public class WaterGenerator: MonoBehaviour{
                     if(waterMap[x,y] == 1){
                         Vector3 position = new Vector3((chunkCoordinate.x*chunkSize+x-size/2-0.1f)*EndlessTerrain.scale,-0.5f,(chunkCoordinate.y*chunkSize+size/2-y-0.1f)*EndlessTerrain.scale);
                         GameObject waterPlaneObject = Instantiate(waterPlane.gameObject,position,Quaternion.identity);
+                        waterPlaneObject.isStatic = true;
                         waterPlaneObject.name = String.Format("Chunk[{0},{1}] Water({2},{3})",chunkCoordinate.x,chunkCoordinate.y,x,y);
                         waterPlaneObject.transform.SetParent(this.transform);
                         waterPlaneObject.transform.localScale = new Vector3(1,10/EndlessTerrain.scale,1)*EndlessTerrain.scale/10;
