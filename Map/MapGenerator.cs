@@ -157,13 +157,14 @@ public class MapGenerator : MonoBehaviour
     MapData GenerateMapData(Vector2 centre){
         float[,] noiseMap = Noise.GenerateNoiseMap(mapChunkSize, mapChunkSize, noiseScale, seed, octaves, persistance, lacunarity, centre + offset, normalizeMode);
 
+        System.Random random = new System.Random(seed);
         bool[,] treeMap = new bool[mapChunkSize,mapChunkSize];
         int[,] waterMap = new int[mapChunkSize,mapChunkSize];
         Color[] colorMap = new Color[mapChunkSize*mapChunkSize];
         for(int y = 0; y<mapChunkSize; y++){
             for(int x = 0; x<mapChunkSize; x++){
                 noiseMap[x,y] -= useFalloutMap? falloutMap[x,y]:0;
-                noiseMap[x,y] = (useFlatCenterMap && centre == Vector2.zero)? Mathf.Abs(falloutMap[x,y]-1)*0.35f + (1-Mathf.Abs(falloutMap[x,y]-1))*noiseMap[x,y]:noiseMap[x,y];
+                noiseMap[x,y] = (useFlatCenterMap && (centre == Vector2.zero)||(centre == EndlessTerrain.worldTreePosition))? Mathf.Abs(falloutMap[x,y]-1)*0.35f + (1-Mathf.Abs(falloutMap[x,y]-1))*noiseMap[x,y]:noiseMap[x,y];
                 float currentHeight = noiseMap [x,y];
 
                 //Color map
@@ -189,7 +190,6 @@ public class MapGenerator : MonoBehaviour
         //Monster’s Lair map
         int numberOfLairs = 8; // or however many lairs you want
         int maxAttempts = 1000; 
-        System.Random random = new System.Random(seed);
         float minHeight = 0.3f; // minimum height for a lair
         float maxHeight = 0.65f; // maximum height for a lair
 
@@ -210,14 +210,6 @@ public class MapGenerator : MonoBehaviour
                 monsterLairCenters.Add(new Vector3(x-mapChunkSize/2,noiseMap[x,y],mapChunkSize/2-y));
             }
         }
-
-        // string log = "";
-        // foreach(var vector in lairCenters){
-        //     log += vector + " ";
-        // }
-
-        // Debug.Log(log);
-
 
         return new MapData(noiseMap,colorMap,treeMap,waterMap,monsterLairCenters);
     }

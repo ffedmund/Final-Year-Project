@@ -61,6 +61,9 @@ public class TerrainChunk
         mapDataReceived = true;
         Texture2D texture = TextureGenerator.TextureFromColorMap(mapData.colorMap,MapGenerator.mapChunkSize,MapGenerator.mapChunkSize);
         meshRenderer.material.mainTexture = texture;
+        if(position==EndlessTerrain.worldTreePosition){
+            WorldTreeSpawner.Create(meshObject.transform);
+        }
         UpdateTerrainChunk();
     }
 
@@ -80,7 +83,6 @@ public class TerrainChunk
                 }
 
                 if(lodIndex != previousLODIndex){
-                    // Debug.Log("Hello");
                     LODMesh lodMesh = lodMeshes[lodIndex];
                     if(lodMesh.hasMesh){
                         meshFilter.mesh = lodMesh.mesh;

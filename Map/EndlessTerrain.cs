@@ -25,6 +25,7 @@ public class EndlessTerrain : MonoBehaviour
     public static TreeGenerator treeGenerator;
     public static GrassSpawner grassSpawner;
     public static MonsterLairGenerator monsterLairGenerator;
+    public static Vector2 worldTreePosition;
 
 
     Vector2 previousViewerPosition;
@@ -46,8 +47,9 @@ public class EndlessTerrain : MonoBehaviour
         chunkSize = MapGenerator.mapChunkSize - 1;
         chunkVisibleInViewDist = Mathf.RoundToInt(maxViewDist/chunkSize);
         viewerPosition = Vector3.zero;
+        System.Random random = new System.Random(mapGenerator.seed);
+        worldTreePosition = new Vector2(random.Next(1,3),random.Next(1,3))*(random.Next(0,2)==0?-1:1)*chunkSize;
 
-        Debug.Log(grassSpawner);
         UpdateVisibleChunks();
         grassSpawner.SetUpTerrainChunkpDictionary(terrainChunkDictionary);
     }

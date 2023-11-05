@@ -14,9 +14,14 @@ public class TestingCommand : MonoBehaviour{
         else UIController.playerData.AddPlayerData(key,value);
     }
 
-    [ConsoleMethod( "bake", "Edit player attribute by key and value")]
+    [ConsoleMethod( "bake", "Bake the AI navigation")]
     public static void bake(){
         FindAnyObjectByType<TestingCommand>().navMeshSurface.BuildNavMesh();
+    }
+
+    [ConsoleMethod( "treechunk", "Get the world tree chunk")]
+    public static void treechunk(){
+        Debug.Log(EndlessTerrain.worldTreePosition/(MapGenerator.mapChunkSize-1));
     }
 
 }
