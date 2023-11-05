@@ -70,8 +70,7 @@ public class PlayerData{
 
     public int GetHonorLevel(){
         int honorLevel = Mathf.FloorToInt(Mathf.Sqrt(_playerAttributesData["honor"]/100));
-
-        return honorLevel;
+        return Mathf.Min(honorLevel,4);
     }
 
     public Dictionary<string,int> GetAttributes(){

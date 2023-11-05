@@ -15,22 +15,35 @@ public class QuestList : MonoBehaviour {
 
     Dictionary<int,List<Quest>> questDictionary = new Dictionary<int, List<Quest>>();
 
-    public async Task LoadQuestList(){
+    public void Setup(int[] questIdList,QuestType questType){
+        if(questIdList != null){
+            specialQuestIds = questIdList;
+        }
+        questTypes = new QuestType[1];
+        questTypes[0] = questType;
+        Start();
+    }
+
+    async void Start(){
+        if(questTypes == null)return;
         await DataReader.ReadQuestDataBase();
         await Task.Run(() => {
             foreach(QuestType questType in questTypes){
                 AddQuestList(questType);
             }
             InitQuests();
-        });     
-        previousTime = Time.time;   
+        });
+        if(TryGetComponent(out QuestGiver questGiver)){
+            questGiver.SetupQuest();
+        }     
+        previousTime = Time.time;
     }
 
     void AddQuestList(QuestType questType){
         switch(questType){
             case QuestType.Special:
                 foreach(int id in specialQuestIds){
-                    if(!questDictionary.ContainsKey((int)QuestType.Rank*10)){
+                    if(!questDictionary.ContainsKey((int)QuestType.Special*10)){
                         questDictionary.Add((int)questType*10,new List<Quest>());
                     }   
                     questDictionary[(int)questType*10].Add(DataReader.specialQuestList.Find(quest => quest.id == id));
@@ -50,6 +63,7 @@ public class QuestList : MonoBehaviour {
     }
 
     void InitQuests(){
+        Debug.Log("Init");
         if(specialQuestIds.Length > 0){
             currentQuestList = questDictionary[(int)QuestType.Special*10];
         }else{
@@ -65,9 +79,7 @@ public class QuestList : MonoBehaviour {
     }
 
     public void GetQuests(){
-        if(specialQuestIds.Length > 0){
-            currentQuestList = questDictionary[(int)QuestType.Special*10];
-        }else if(Time.time - previousTime > questRefreshFrequency){
+        if(Time.time - previousTime > questRefreshFrequency){
             Debug.Log("Quest Refresh");
             List<Quest> questsToRemove = new List<Quest>();
             foreach(Quest quest in currentQuestList){
@@ -96,14 +108,16 @@ public class QuestList : MonoBehaviour {
     }
 
     public bool CanReportQuest(Quest quest){
-        for(int i = 0; i < questTypes.Length; i ++){
-            if(quest.questType == questTypes[i]){
-                if(quest.questType == QuestType.Regular || quest.questType == QuestType.Rank){
-                    return true;
-                }else{
-                    foreach(int id in specialQuestIds){
-                        if(quest.id == id){
-                            return true;
+        if(quest.goalChecker.isReached()){
+            for(int i = 0; i < questTypes.Length; i ++){
+                if(quest.questType == questTypes[i]){
+                    if(quest.questType == QuestType.Regular || quest.questType == QuestType.Rank){
+                        return true;
+                    }else{
+                        foreach(int id in specialQuestIds){
+                            if(quest.id == id && TryGetComponent(out NPCController npcController) && npcController.npc.npcName == quest.targetNPC){
+                                return true;
+                            }
                         }
                     }
                 }

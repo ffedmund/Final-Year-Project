@@ -33,7 +33,6 @@ public class MapDisplay : MonoBehaviour
                }
           }
           waterGenerator.CreateWater(mapData.waterMap,Vector2.zero);
-          grassSpawner.GenerateGrass(mapData.heightMap,Vector2.zero,meshFilter.mesh.bounds);
      }
 
      public void DrawTree(bool[,] treeMap, float[,] heightMap){

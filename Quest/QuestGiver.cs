@@ -9,8 +9,7 @@ public class QuestGiver : MonoBehaviour {
     public QuestList _questList;
     QuestBoardUI questBoardUI;
 
-    async void Awake() {
-        await _questList.LoadQuestList();
+    public void SetupQuest() {
         if(TryGetComponent(out questBoardUI))
         {   
             questBoardUI.Setup(_questList);

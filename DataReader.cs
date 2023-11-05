@@ -117,11 +117,12 @@ public static class DataReader{
                 int itemRewardAmount = itemReward != ""?int.Parse(node["itemRewardAmount"].InnerText):0;
                 string targetNPC = node["targetNPC"].InnerText;
                 string completeDialog = node["completeDialog"].InnerText;
-                Quest quest = new Quest(id,questType,honorRank,title,description,moneyReward,honorReward,itemReward,itemRewardAmount,targetNPC,completeDialog);
                 GoalType goalType = (GoalType)int.Parse(node["goalType"].InnerText);
                 string targetID = node["targetID"].InnerText;
                 int targetAmount = int.Parse(node["targetAmount"].InnerText);
+                Quest quest = new Quest(id,questType,honorRank,title,description,moneyReward,honorReward,itemReward,itemRewardAmount,targetNPC,completeDialog);
                 quest.goalChecker = new GoalChecker(goalType, targetAmount,targetID);
+                
                 switch(questType){
                     case QuestType.Special:
                         specialQuestList.Add(quest);

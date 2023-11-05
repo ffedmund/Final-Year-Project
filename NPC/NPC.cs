@@ -13,6 +13,15 @@ namespace FYP
         public string[] dialogues;
         public List<Item> npcInventory;
         public bool isTradable;
+
+        [Header("Quest Setting")]
+        public bool isQuestGiver;
+        public bool isQuestReceiver;
+        public int[] questIdList;
+
+        [Header("NPC Avator")]
+        public GameObject npcPrefab;
+        public RuntimeAnimatorController npcAnimator;
     }
 }
 
