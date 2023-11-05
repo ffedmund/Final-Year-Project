@@ -8,6 +8,8 @@ namespace FYP
 {
     public class HandEquipmentSlotUI : MonoBehaviour
     {
+        UIController uiController;
+
         public Image icon;
         WeaponItem weapon;
 
@@ -15,6 +17,10 @@ namespace FYP
         public bool rightHandSlot02;
         public bool leftHandSlot01;
         public bool leftHandSlot02;
+
+        private void Awake() {
+            uiController = FindObjectOfType<UIController>();
+        }
 
         public void AddItem(WeaponItem newWeapon)
         {
@@ -30,6 +36,27 @@ namespace FYP
             icon.sprite = null;
             icon.enabled = false;
             gameObject.SetActive(false);
+        }
+
+        public void SelectThisSlot()
+        {
+            uiController.ResetAllSelectedSlots();
+            if (rightHandSlot01)
+            {
+                uiController.rightHandSlot01Selected = true;
+            }
+            else if (rightHandSlot02)
+            {
+                uiController.rightHandSlot02Selected = true;
+            }
+            else if (leftHandSlot01)
+            {
+                uiController.leftHandSlot01Selected = true;
+            }
+            else if (leftHandSlot02)
+            {
+                uiController.leftHandSlot02Selected = true;
+            }
         }
     }
 }

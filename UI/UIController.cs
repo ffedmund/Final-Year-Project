@@ -17,6 +17,14 @@ namespace FYP
         public GameObject selectWindow;
         // public GameObject equipmentScreenWindow;
         public GameObject weaponInventoryWindow;
+
+        [Header("Equipment Window Slot Selected")]
+        public bool rightHandSlot01Selected;
+        public bool rightHandSlot02Selected;
+        public bool leftHandSlot01Selected;
+        public bool leftHandSlot02Selected;
+
+
         public GameObject stateUI;
         public GameObject questUI;
         public GameObject playerInfoUI;
@@ -172,7 +180,7 @@ namespace FYP
             }
             honorLevelText.SetText(honorLevelSting);
             int honorValue = playerData.GetAttribute("honor");
-            honorBar.value = honorValue/(100*Mathf.Pow(playerData.GetHonorLevel()+1,2));
+            honorBar.value = (honorValue-100*Mathf.Pow(playerData.GetHonorLevel(),2))/(100*Mathf.Pow(playerData.GetHonorLevel()+1,2));
         }
 
         public void ChangeShowingInventory(int index){
@@ -192,8 +200,17 @@ namespace FYP
 
         public void CloseAllInventoryWindows()
         {
+            ResetAllSelectedSlots();
             weaponInventoryWindow.SetActive(false);
             // equipmentScreenWindow.SetActive(false);
+        }
+
+        public void ResetAllSelectedSlots()
+        {
+            rightHandSlot01Selected = false;
+            rightHandSlot02Selected = false;
+            leftHandSlot01Selected = false;
+            leftHandSlot02Selected = false;
         }
     }
 }

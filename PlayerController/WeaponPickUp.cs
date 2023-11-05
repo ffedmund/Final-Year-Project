@@ -35,6 +35,10 @@ namespace FYP
             playerManager.itemInteractableGameObject.GetComponentInChildren<TextMeshProUGUI>().text = weapon.itemName;
             playerManager.itemInteractableGameObject.SetActive(true);
 
+            foreach(Quest quest in playerManager.playerData.quests){
+                quest.goalChecker.ItemCollected(weapon.itemName);
+            }
+
             Destroy(gameObject);
         }
     }

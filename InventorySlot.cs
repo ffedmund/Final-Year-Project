@@ -11,11 +11,24 @@ namespace FYP
 
         public Image icon;
         public TextMeshProUGUI text;
-        Item item;
+        public Item item;
 
         public void AddItem<T>(T newItem)
         {
-            if(newItem is Item){
+            if (newItem is WeaponItem)
+            {
+                WeaponInventorySlot weaponInventorySlot = GetComponent<WeaponInventorySlot>();
+
+                Debug.Log("Testing1");
+                // item = (Item)(object)newItem;
+                weaponInventorySlot.AddItem((WeaponItem)(object)newItem);
+                // icon.sprite = item.itemIcon;
+                // icon.enabled = true;
+                // text.enabled = false;
+                // gameObject.SetActive(true);
+            }
+            else if(newItem is Item){
+                Debug.Log("Testing2");
                 item = (Item)(object)newItem;
                 icon.sprite = item.itemIcon;
                 icon.enabled = true;
@@ -26,6 +39,7 @@ namespace FYP
 
         public void AddItem<T>(T newItem, int number)
         {
+            
             if(newItem is Item){
                 item = (Item)(object)newItem;
                 icon.sprite = item.itemIcon;
@@ -36,14 +50,14 @@ namespace FYP
             }
         }
 
-        public void AddItem(WeaponItem newItem)
-        {
-            item = newItem;
-            icon.sprite = item.itemIcon;
-            icon.enabled = true;
-            text.enabled = false;
-            gameObject.SetActive(true);
-        }
+        // public void AddItem(WeaponItem newItem)
+        // {
+        //     item = newItem;
+        //     icon.sprite = item.itemIcon;
+        //     icon.enabled = true;
+        //     text.enabled = false;
+        //     gameObject.SetActive(true);
+        // }
 
         public Item GetItem(){
             return item;
@@ -56,6 +70,7 @@ namespace FYP
             icon.enabled = false;
             gameObject.SetActive(false);
         }
+        
     }
 }
 

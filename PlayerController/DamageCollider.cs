@@ -48,6 +48,17 @@ namespace FYP
                 {
                     enemyStats.TakeDamage(currentWeaponDamage);
                 }
+
+                PlayerStats playerStats = transform.root.gameObject.GetComponent<PlayerStats>();
+                if (playerStats != null)
+                {
+                    EnemyManager enemyManager = collision.GetComponent<EnemyManager>();
+                    if (enemyManager != null)
+                    {
+                        enemyManager.currentTarget = playerStats;
+                    }
+                }
+
             }
         }
     }
